@@ -1,7 +1,8 @@
-package socket
+package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/onee-only/miner-node/config"
@@ -12,7 +13,7 @@ type publicKeyResponse struct {
 	PublicKey string `json:"publicKey"`
 }
 
-func InitServer() {
+func InitServer(port int) {
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 
@@ -29,5 +30,5 @@ func InitServer() {
 		}
 	})
 
-	http.ListenAndServe(":4000", nil)
+	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }

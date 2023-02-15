@@ -1,7 +1,10 @@
 package main
 
-import "github.com/onee-only/miner-node/socket"
+import (
+	"github.com/onee-only/miner-node/config"
+	"github.com/onee-only/miner-node/http"
+)
 
 func main() {
-	socket.InitServer()
+	http.InitServer(config.Port)
 }
