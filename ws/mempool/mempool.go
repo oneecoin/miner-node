@@ -9,6 +9,8 @@ import (
 	"github.com/onee-only/miner-node/config"
 )
 
+var mempoolConn *websocket.Conn
+
 func Connect() {
 	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 	s.Prefix = "Connecting mempool server "
@@ -19,5 +21,6 @@ func Connect() {
 	if err != nil {
 		panic(err)
 	}
+	mempoolConn = conn
 	s.Stop()
 }
