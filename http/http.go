@@ -30,5 +30,6 @@ func InitServer(port int) {
 		}
 	})
 
-	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	lib.HandleErr(err)
 }

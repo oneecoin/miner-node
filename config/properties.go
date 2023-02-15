@@ -6,3 +6,4 @@ var PublicKey string
 var Port int
 
 var ErrorStr func(a ...interface{}) string = color.New(color.FgRed).SprintFunc()
+var MempoolAddress string = "localhost:8080"

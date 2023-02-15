@@ -47,5 +47,7 @@ func Setup() {
 		os.Exit(0)
 	}
 	config.Port, _ = strconv.Atoi(port)
-	
+
+	// finish
+	fmt.Printf("\nStarting miner with port: %d\n\n", config.Port)
 }
