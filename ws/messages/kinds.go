@@ -23,4 +23,7 @@ const (
 	// etc.
 	MessageRejectPeer
 	MessagePeerRejected
+
+	// download blockchain
+	MessageDownloadRequest
 )

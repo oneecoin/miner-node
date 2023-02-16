@@ -3,6 +3,7 @@ module github.com/onee-only/miner-node
 go 1.19
 
 require (
+	atomicgo.dev/cursor v0.1.1 // indirect
 	github.com/briandowns/spinner v1.21.0 // indirect
 	github.com/deiwin/interact v0.0.0-20150409130834-720596b65af8 // indirect
 	github.com/fatih/color v1.14.1 // indirect

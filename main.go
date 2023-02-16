@@ -11,6 +11,8 @@ import (
 func main() {
 	cli.Setup()
 	go http.InitServer(config.Port)
-	peerList := mempool.Connect()
-	peers.Connect(peerList)
+	mempool.Connect()
+	peers.Connect()
+	peers.StartDownloadingBlockChain()
+	mempool.ListenForMining()
 }
