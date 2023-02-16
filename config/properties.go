@@ -10,5 +10,6 @@ const (
 var PublicKey string
 var Port int
 var CheckInterval int
+var IsDownloading bool = false
 
 var ErrorStr func(a ...interface{}) string = color.New(color.FgRed).SprintFunc()

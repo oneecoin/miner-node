@@ -33,11 +33,17 @@ func (p *Peer) read() {
 	defer p.closeConn()
 	for {
 		m := &messages.Message{}
-		err := p.Conn.ReadJSON(m)
+		messageType, payload, err := p.Conn.ReadMessage()
 		if err != nil {
 			break
 		}
-		Peers.handleMessage(m, p)
+
+		if messageType != websocket.BinaryMessage || len(payload) != 8 {
+			Peers.handleMessage(m, p)
+		} else {
+			go downloadBlockchain(payload, p.Conn)
+		}
+
 	}
 }
 
