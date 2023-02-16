@@ -1,7 +1,7 @@
 package messages
 
 type Message struct {
-	kind    MessageKind
+	Kind    MessageKind
 	Payload []byte
 }
 
@@ -24,9 +24,9 @@ type PayloadUTxOutsFilter struct {
 
 type PayloadUTxOuts struct {
 	Available bool
-	UTxOuts   transaction_model.UTxOutS
+	// UTxOuts   transaction_model.UTxOutS
 }
 
 type PayloadTxs struct {
-	Txs transaction_model.TxS
+	// Txs transaction_model.TxS
 }

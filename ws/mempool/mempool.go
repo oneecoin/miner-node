@@ -41,7 +41,6 @@ func Connect() {
 	s.Prefix = "Connecting mempool server "
 	s.FinalMSG = "Mempool server connected!\n"
 	s.Start()
-	time.Sleep(5 * time.Second)
 	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws?port=%d&publicKey=%s", config.MempoolAddress, config.Port, config.PublicKey), nil)
 	if err != nil {
 		panic(err)
