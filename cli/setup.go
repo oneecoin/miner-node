@@ -20,6 +20,13 @@ func checkHexString(input string) error {
 	return nil
 }
 
+func checkNotEmpty(input string) error {
+	if input == "" {
+		return errors.New(config.ErrorStr("input should not be empty"))
+	}
+	return nil
+}
+
 func checkInt(input string) error {
 	_, err := strconv.Atoi(input)
 	if err != nil {
@@ -37,7 +44,7 @@ func Setup() {
 
 	// interact
 	actor := interact.NewActor(os.Stdin, os.Stdout)
-	publicKey, err := actor.PromptAndRetry("Please enter your public key", checkHexString)
+	publicKey, err := actor.PromptAndRetry("Please enter your public key", checkNotEmpty, checkHexString)
 	if err != nil {
 		os.Exit(0)
 	}
@@ -47,7 +54,12 @@ func Setup() {
 		os.Exit(0)
 	}
 	config.Port, _ = strconv.Atoi(port)
+	checkInterval, err := actor.PromptOptionalAndRetry("Please enter the check interval (m)", "5", checkInt)
+	if err != nil {
+		os.Exit(0)
+	}
+	config.CheckInterval, _ = strconv.Atoi(checkInterval)
 
 	// finish
-	fmt.Printf("\nStarting miner with port: %d\n\n", config.Port)
+	fmt.Printf("\nStarting miner with\n\tport: %d\n\tcheck interval: %dm\n\n", config.Port, config.CheckInterval)
 }
