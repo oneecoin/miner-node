@@ -16,6 +16,7 @@ import (
 const chunkSize = 1024
 
 func StartDownloadingBlockChain() {
+	config.IsDownloading = true
 	peer := getRandomPeer()
 
 	m := messages.Message{
@@ -42,6 +43,7 @@ func downloadBlockchain(header []byte, conn *websocket.Conn) {
 	lib.HandleErr(err)
 
 	bar.Finish()
+	config.IsDownloading = false
 }
 
 func uploadBlockchain(p *Peer) {
@@ -54,6 +56,8 @@ func uploadBlockchain(p *Peer) {
 	lib.HandleErr(err)
 	fileSize := make([]byte, 8)
 	binary.LittleEndian.PutUint64(fileSize, uint64(fileInfo.Size()))
+	err = p.Conn.WriteMessage(websocket.BinaryMessage, fileSize)
+	lib.HandleErr(err)
 
 	for {
 		buffer := make([]byte, chunkSize)
@@ -68,5 +72,4 @@ func uploadBlockchain(p *Peer) {
 		lib.HandleErr(err)
 	}
 	config.IsDownloading = false
-
 }

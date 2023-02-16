@@ -4,6 +4,8 @@ type MessageKind int
 
 const (
 
+	// mempool-node
+
 	// requests from miner
 	MessageTxsRequest MessageKind = iota
 
@@ -24,6 +26,10 @@ const (
 	MessageRejectPeer
 	MessagePeerRejected
 
+	// node-node
+
 	// download blockchain
 	MessageDownloadRequest
+
+	MessageNewBlock
 )
