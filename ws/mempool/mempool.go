@@ -7,9 +7,34 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/gorilla/websocket"
 	"github.com/onee-only/miner-node/config"
+	"github.com/onee-only/miner-node/ws/messages"
 )
 
-var mempoolConn *websocket.Conn
+type tMempool struct {
+	conn  *websocket.Conn
+	inbox chan []byte
+}
+
+var mempool tMempool = tMempool{
+	inbox: make(chan []byte),
+}
+
+func (tMempool) read() {
+	defer mempool.conn.Close()
+	for {
+		m := &messages.Message{}
+		mempool.conn.ReadJSON(m)
+		handleMessage(m)
+	}
+}
+
+func (tMempool) write() {
+	defer mempool.conn.Close()
+	for {
+		m := <-mempool.inbox
+		mempool.conn.WriteMessage(websocket.TextMessage, m)
+	}
+}
 
 func Connect() {
 	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
@@ -21,6 +46,8 @@ func Connect() {
 	if err != nil {
 		panic(err)
 	}
-	mempoolConn = conn
+	mempool.conn = conn
+	go mempool.read()
+	go mempool.write()
 	s.Stop()
 }

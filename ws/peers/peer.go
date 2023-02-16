@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/gorilla/websocket"
-	"github.com/onee-only/miner-node/ws/messages"
 )
 
 type TAddress struct {

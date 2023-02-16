@@ -1,11 +1,11 @@
 package messages
 
-type MempoolMessageKind int
+type MessageKind int
 
 const (
 
 	// requests from miner
-	MessageTxsRequest MempoolMessageKind = iota
+	MessageTxsRequest MessageKind = iota
 
 	// responses from miner
 	MessageBlocksResponse
@@ -25,6 +25,3 @@ const (
 	MessageRejectPeer
 	MessagePeerRejected
 )
-
-type PeerMessageKind int
-

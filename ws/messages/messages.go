@@ -1,12 +1,7 @@
 package messages
 
-type MempoolMessage struct {
-	Kind    MempoolMessageKind
-	Payload []byte
-}
-
-type PeerMessage struct {
-	Kind    PeerMessageKind
+type Message struct {
+	kind    MessageKind
 	Payload []byte
 }
 
