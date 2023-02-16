@@ -9,12 +9,6 @@ import (
 
 func handleMessage(m *messages.Message) {
 	switch m.Kind {
-	case messages.MessageNewPeer:
-		payload := &messages.PayloadPeer{}
-		err := json.Unmarshal(m.Payload, payload)
-		lib.HandleErr(err)
-		addPeer(payload.PeerAddress)
-
 	case messages.MessageBlocksRequest:
 		payload := &messages.PayloadPage{}
 		err := json.Unmarshal(m.Payload, payload)
@@ -39,10 +33,6 @@ func handleMessage(m *messages.Message) {
 		lib.HandleErr(err)
 		rejectPeer(payload.PeerAddress)
 	}
-}
-
-func addPeer(address string) {
-
 }
 
 func sendBlocks(page int) {
