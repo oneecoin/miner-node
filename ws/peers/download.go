@@ -37,9 +37,7 @@ func downloadBlockchain(header []byte, conn *websocket.Conn) {
 		"Downloading blockchain",
 	)
 
-	writer := &progressWriter{writer: &WebSocketWriter{conn}, bar: bar}
-
-	_, err := io.Copy(writer, &WebSocketReader{conn})
+	_, err := io.Copy(io.MultiWriter(file, bar), &WebSocketReader{conn})
 	lib.HandleErr(err)
 
 	bar.Finish()
@@ -71,5 +69,7 @@ func uploadBlockchain(p *Peer) {
 		err = p.Conn.WriteMessage(websocket.BinaryMessage, buffer[:bytesRead])
 		lib.HandleErr(err)
 	}
+	err = p.Conn.WriteMessage(websocket.BinaryMessage, nil)
+	lib.HandleErr(err)
 	config.IsDownloading = false
 }
