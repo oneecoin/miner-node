@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gorilla/websocket"
+	"github.com/onee-only/miner-node/ws/messages"
 )
 
 type TAddress struct {
@@ -12,10 +13,9 @@ type TAddress struct {
 }
 
 type Peer struct {
-	Conn      *websocket.Conn
-	Inbox     chan []byte
-	PublicKey string
-	Address   TAddress
+	Conn    *websocket.Conn
+	Inbox   chan []byte
+	Address TAddress
 }
 
 func (p Peer) GetAddress() string {

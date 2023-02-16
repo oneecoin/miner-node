@@ -1,12 +1,14 @@
 package mempool
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/briandowns/spinner"
 	"github.com/gorilla/websocket"
 	"github.com/onee-only/miner-node/config"
+	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/ws/messages"
 )
 
@@ -36,17 +38,20 @@ func (tMempool) write() {
 	}
 }
 
-func Connect() {
+func Connect() *[]string {
 	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
-	s.Prefix = "Connecting mempool server "
+	s.Prefix = "Connecting to mempool server "
 	s.FinalMSG = "Mempool server connected!\n"
 	s.Start()
-	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws?port=%d&publicKey=%s", config.MempoolAddress, config.Port, config.PublicKey), nil)
-	if err != nil {
-		panic(err)
-	}
+	conn, res, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws?port=%d&publicKey=%s", config.MempoolAddress, config.Port, config.PublicKey), nil)
+	lib.HandleErr(err)
 	mempool.conn = conn
 	go mempool.read()
 	go mempool.write()
+
+	var peerList []string
+	err = json.NewDecoder(res.Body).Decode(&peerList)
+	lib.HandleErr(err)
 	s.Stop()
+	return &peerList
 }
