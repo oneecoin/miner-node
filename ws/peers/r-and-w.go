@@ -23,7 +23,6 @@ func StartDownloadingBlockChain() {
 		fmt.Println(properties.WarningStr("Peer not found. Initializing DB"))
 		_, err := os.Create("blockchain.db")
 		lib.HandleErr(err)
-		properties.IsDownloading = false
 		return
 	}
 
@@ -48,20 +47,19 @@ func downloadBlockchain(header []byte, conn *websocket.Conn) {
 		"Downloading blockchain",
 	)
 
-	file, err := os.Create("blockchain.db")
+	file, err := os.Create(properties.DBName)
 	lib.HandleErr(err)
 
 	_, err = io.Copy(io.MultiWriter(file, bar), &WebSocketReader{conn})
 	lib.HandleErr(err)
 
 	bar.Finish()
-	properties.IsDownloading = false
 	Peers.C <- properties.MessageBlockchainDownloaded
 }
 
 func uploadBlockchain(p *Peer) {
 	properties.IsDownloading = true
-	file, err := os.Open("blockchain.db")
+	file, err := os.Open(properties.DBName)
 	lib.HandleErr(err)
 	defer file.Close()
 

@@ -22,6 +22,7 @@ func main() {
 	peers.Connect()
 	peers.StartDownloadingBlockChain()
 	db.Init()
+	defer db.Close()
 	mempool.ListenForMining()
 }
 

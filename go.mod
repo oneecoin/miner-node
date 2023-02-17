@@ -18,6 +18,7 @@ require (
 	github.com/schollz/progressbar v1.0.0 // indirect
 	github.com/schollz/progressbar/v3 v3.13.0 // indirect
 	github.com/tj/go-spin v1.1.0 // indirect
+	go.etcd.io/bbolt v1.3.7 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/term v0.5.0 // indirect
 )
