@@ -7,7 +7,7 @@ const (
 	// mempool-node
 
 	// requests from miner
-	MessageTxsRequest MessageKind = iota
+	MessageMempoolTxsRequest MessageKind = iota
 
 	// responses from miner
 	MessageBlocksResponse
@@ -20,7 +20,8 @@ const (
 	MessageUTxOutsRequest
 
 	// responses from mempool
-	MessageTxsResponse
+	MessageTxsMempoolResponse
+	MessageTxsDeclined
 
 	// etc.
 	MessageRejectPeer

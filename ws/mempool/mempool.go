@@ -4,14 +4,16 @@ import (
 	"fmt"
 
 	"github.com/gorilla/websocket"
+	"github.com/onee-only/miner-node/blockchain/transactions"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
 	"github.com/onee-only/miner-node/ws/messages"
 )
 
 type tMempool struct {
-	conn  *websocket.Conn
-	inbox chan []byte
+	conn             *websocket.Conn
+	inbox            chan []byte
+	transactionInbox chan transactions.TxS
 }
 
 var mempool tMempool = tMempool{

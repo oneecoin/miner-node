@@ -14,6 +14,8 @@ func ListenForMining() {
 	interval := time.Minute * time.Duration(properties.CheckInterval)
 	for {
 		var spent time.Duration = 0
+
+	intervalLoop:
 		for {
 			select {
 			case m := <-peers.Peers.C:
@@ -33,14 +35,35 @@ func ListenForMining() {
 					properties.WarningStr(fmtDuration(spent)),
 					fmtDuration(interval))
 				if interval == spent {
-					break
+					break intervalLoop
 				}
 				time.Sleep(time.Second)
 				spent += time.Second
 			}
 			cursor.ClearLine()
 		}
+		fmt.Println("Done waiting")
 		// time to mine some blocks
+
+		s := lib.CreateSpinner(
+			"Requesting transactions to mine ",
+			"Transactions received!",
+		)
+
+		// request for transactions
+
+		txs := <-mempool.transactionInbox
+
+		if txs == nil {
+			s.FinalMSG = properties.ErrorStr("Rejected due to lack of transactions")
+			s.Stop()
+			continue
+		}
+		s.Stop()
+
+		// mine the transactions
+
+		// broadcast the transactions to peer
 	}
 }
 

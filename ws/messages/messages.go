@@ -1,5 +1,7 @@
 package messages
 
+import "github.com/onee-only/miner-node/blockchain/transactions"
+
 type Message struct {
 	Kind    MessageKind
 	Payload []byte
@@ -24,9 +26,13 @@ type PayloadUTxOutsFilter struct {
 
 type PayloadUTxOuts struct {
 	Available bool
-	// UTxOuts   transaction_model.UTxOutS
+	UTxOuts   transactions.UTxOutS
 }
 
 type PayloadTxs struct {
-	// Txs transaction_model.TxS
+	Txs transactions.TxS
+}
+
+type PayloadCount struct {
+	Count int
 }
