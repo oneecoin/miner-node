@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/gorilla/websocket"
-	"github.com/onee-only/miner-node/config"
 	"github.com/onee-only/miner-node/lib"
+	"github.com/onee-only/miner-node/properties"
 	"github.com/onee-only/miner-node/ws/peers"
 )
 
@@ -66,7 +66,7 @@ func InitServer(port int) {
 	http.HandleFunc("/check", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
 			bytes, err := json.Marshal(struct{ PublicKey string }{
-				PublicKey: config.PublicKey,
+				PublicKey: properties.PublicKey,
 			})
 			lib.HandleErr(err)
 			w.WriteHeader(http.StatusAccepted)

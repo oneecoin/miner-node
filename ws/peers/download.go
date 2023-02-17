@@ -3,12 +3,13 @@ package peers
 import (
 	"encoding/binary"
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 
 	"github.com/gorilla/websocket"
-	"github.com/onee-only/miner-node/config"
 	"github.com/onee-only/miner-node/lib"
+	"github.com/onee-only/miner-node/properties"
 	"github.com/onee-only/miner-node/ws/messages"
 	"github.com/schollz/progressbar/v3"
 )
@@ -16,8 +17,17 @@ import (
 const chunkSize = 1024
 
 func StartDownloadingBlockChain() {
-	config.IsDownloading = true
+	properties.IsDownloading = true
 	peer := getRandomPeer()
+	if peer == nil {
+		fmt.Println(properties.WarningStr("Peer not found. Initializing DB"))
+		_, err := os.Create("blockchain.db")
+		lib.HandleErr(err)
+		properties.IsDownloading = false
+		return
+	}
+
+	fmt.Println(properties.WarningStr("Your DB needs to be synchronized!"))
 
 	m := messages.Message{
 		Kind:    messages.MessageDownloadRequest,
@@ -27,6 +37,7 @@ func StartDownloadingBlockChain() {
 	bytes, err := json.Marshal(m)
 	lib.HandleErr(err)
 	peer.Inbox <- bytes
+	<-Peers.C
 }
 
 func downloadBlockchain(header []byte, conn *websocket.Conn) {
@@ -37,15 +48,19 @@ func downloadBlockchain(header []byte, conn *websocket.Conn) {
 		"Downloading blockchain",
 	)
 
-	_, err := io.Copy(io.MultiWriter(file, bar), &WebSocketReader{conn})
+	file, err := os.Create("blockchain.db")
+	lib.HandleErr(err)
+
+	_, err = io.Copy(io.MultiWriter(file, bar), &WebSocketReader{conn})
 	lib.HandleErr(err)
 
 	bar.Finish()
-	config.IsDownloading = false
+	properties.IsDownloading = false
+	Peers.C <- properties.MessageBlockchainDownloaded
 }
 
 func uploadBlockchain(p *Peer) {
-	config.IsDownloading = true
+	properties.IsDownloading = true
 	file, err := os.Open("blockchain.db")
 	lib.HandleErr(err)
 	defer file.Close()
@@ -71,5 +86,5 @@ func uploadBlockchain(p *Peer) {
 	}
 	err = p.Conn.WriteMessage(websocket.BinaryMessage, nil)
 	lib.HandleErr(err)
-	config.IsDownloading = false
+	properties.IsDownloading = false
 }

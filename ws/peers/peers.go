@@ -10,20 +10,20 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/gorilla/websocket"
-	"github.com/onee-only/miner-node/config"
 	"github.com/onee-only/miner-node/lib"
+	"github.com/onee-only/miner-node/properties"
 )
 
 type TPeers struct {
 	V map[string]*Peer
 	M sync.Mutex
-	C chan config.ChanMessageType
+	C chan properties.ChanMessageType
 }
 
 var Peers *TPeers = &TPeers{
 	V: make(map[string]*Peer),
 	M: sync.Mutex{},
-	C: make(chan config.ChanMessageType),
+	C: make(chan properties.ChanMessageType),
 }
 
 func Connect() {
@@ -33,13 +33,13 @@ func Connect() {
 	s.Start()
 
 	var peerList []string
-	res, err := http.Get(fmt.Sprintf("http://%s/peers?port=%d", config.MempoolAddress, config.Port))
+	res, err := http.Get(fmt.Sprintf("http://%s/peers?port=%d", properties.MempoolAddress, properties.Port))
 	lib.HandleErr(err)
 	err = json.NewDecoder(res.Body).Decode(&peerList)
 	lib.HandleErr(err)
 
 	for _, address := range peerList {
-		conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws?port=%d&publicKey=%s", address, config.Port, config.PublicKey), nil)
+		conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws?port=%d&publicKey=%s", address, properties.Port, properties.PublicKey), nil)
 		lib.HandleErr(err)
 
 		p := &Peer{

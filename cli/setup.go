@@ -9,20 +9,20 @@ import (
 
 	"github.com/deiwin/interact"
 	"github.com/mbndr/figlet4go"
-	"github.com/onee-only/miner-node/config"
+	"github.com/onee-only/miner-node/properties"
 )
 
 func checkHexString(input string) error {
 	_, err := hex.DecodeString(input)
 	if err != nil {
-		return errors.New(config.ErrorStr("input should be hex-encoded"))
+		return errors.New(properties.ErrorStr("input should be hex-encoded"))
 	}
 	return nil
 }
 
 func checkNotEmpty(input string) error {
 	if input == "" {
-		return errors.New(config.ErrorStr("input should not be empty"))
+		return errors.New(properties.ErrorStr("input should not be empty"))
 	}
 	return nil
 }
@@ -30,7 +30,7 @@ func checkNotEmpty(input string) error {
 func checkInt(input string) error {
 	_, err := strconv.Atoi(input)
 	if err != nil {
-		return errors.New(config.ErrorStr("input should be integer"))
+		return errors.New(properties.ErrorStr("input should be integer"))
 	}
 	return nil
 }
@@ -48,18 +48,18 @@ func Setup() {
 	if err != nil {
 		os.Exit(0)
 	}
-	config.PublicKey = publicKey
+	properties.PublicKey = publicKey
 	port, err := actor.PromptOptionalAndRetry("Please enter the port number", "4000", checkInt)
 	if err != nil {
 		os.Exit(0)
 	}
-	config.Port, _ = strconv.Atoi(port)
+	properties.Port, _ = strconv.Atoi(port)
 	checkInterval, err := actor.PromptOptionalAndRetry("Please enter the check interval (m)", "5", checkInt)
 	if err != nil {
 		os.Exit(0)
 	}
-	config.CheckInterval, _ = strconv.Atoi(checkInterval)
+	properties.CheckInterval, _ = strconv.Atoi(checkInterval)
 
 	// finish
-	fmt.Printf("\nStarting miner with\n\tport: %d\n\tcheck interval: %dm\n\n", config.Port, config.CheckInterval)
+	fmt.Printf("\nStarting miner with\n\tport: %d\n\tcheck interval: %dm\n\n", properties.Port, properties.CheckInterval)
 }

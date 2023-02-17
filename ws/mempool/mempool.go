@@ -6,8 +6,8 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/gorilla/websocket"
-	"github.com/onee-only/miner-node/config"
 	"github.com/onee-only/miner-node/lib"
+	"github.com/onee-only/miner-node/properties"
 	"github.com/onee-only/miner-node/ws/messages"
 )
 
@@ -42,7 +42,7 @@ func Connect() {
 	s.Prefix = "Connecting to mempool server "
 	s.FinalMSG = "Mempool server connected!\n"
 	s.Start()
-	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws?port=%d&publicKey=%s", config.MempoolAddress, config.Port, config.PublicKey), nil)
+	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws?port=%d&publicKey=%s", properties.MempoolAddress, properties.Port, properties.PublicKey), nil)
 	lib.HandleErr(err)
 	mempool.conn = conn
 	go mempool.read()
