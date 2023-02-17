@@ -58,6 +58,7 @@ func downloadBlockchain(header []byte, conn *websocket.Conn) {
 }
 
 func uploadBlockchain(p *Peer) {
+	Peers.C <- properties.MessageBlockchainUploading
 	properties.IsDownloading = true
 	file, err := os.Open(properties.DBName)
 	lib.HandleErr(err)

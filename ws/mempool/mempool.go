@@ -2,9 +2,7 @@ package mempool
 
 import (
 	"fmt"
-	"time"
 
-	"github.com/briandowns/spinner"
 	"github.com/gorilla/websocket"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
@@ -38,10 +36,11 @@ func (tMempool) write() {
 }
 
 func Connect() {
-	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
-	s.Prefix = "Connecting to mempool server "
-	s.FinalMSG = "Mempool server connected!\n"
-	s.Start()
+	s := lib.CreateSpinner(
+		"Connecting to mempool server",
+		"Mempool server connected!",
+	)
+
 	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws?port=%d&publicKey=%s", properties.MempoolAddress, properties.Port, properties.PublicKey), nil)
 	lib.HandleErr(err)
 	mempool.conn = conn

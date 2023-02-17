@@ -6,9 +6,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
-	"time"
 
-	"github.com/briandowns/spinner"
 	"github.com/gorilla/websocket"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
@@ -27,10 +25,10 @@ var Peers *TPeers = &TPeers{
 }
 
 func Connect() {
-	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
-	s.Prefix = "Connecting to nodes "
-	s.FinalMSG = "Nodes connected!\n"
-	s.Start()
+	s := lib.CreateSpinner(
+		"Connecting to nodes",
+		"Nodes connected!",
+	)
 
 	var peerList []string
 	res, err := http.Get(fmt.Sprintf("http://%s/peers?port=%d", properties.MempoolAddress, properties.Port))

@@ -5,18 +5,29 @@ import (
 	"time"
 
 	"atomicgo.dev/cursor"
+	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
 	"github.com/onee-only/miner-node/ws/peers"
 )
 
 func ListenForMining() {
+	interval := time.Minute * time.Duration(properties.CheckInterval)
 	for {
-		interval := time.Minute * time.Duration(properties.CheckInterval)
 		var spent time.Duration = 0
 		for {
 			select {
-			case <-peers.Peers.C:
-
+			case m := <-peers.Peers.C:
+				if m == properties.MessageBlockchainUploading {
+					fmt.Println("Blockchain upload requested")
+					s := lib.CreateSpinner(
+						"Uploading blockchain",
+						"Blockchain successfully uploaded!",
+					)
+					m = <-peers.Peers.C
+					if m == properties.MessageBlockchainUploaded {
+						s.Stop()
+					}
+				}
 			default:
 				fmt.Printf("Waiting to mine blocks... %s / %s",
 					properties.WarningStr(fmtDuration(spent)),
@@ -29,6 +40,7 @@ func ListenForMining() {
 			}
 			cursor.ClearLine()
 		}
+		// time to mine some blocks
 	}
 }
 

@@ -1,9 +1,6 @@
 package db
 
 import (
-	"time"
-
-	"github.com/briandowns/spinner"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
 	bolt "go.etcd.io/bbolt"
@@ -12,13 +9,11 @@ import (
 var DB *bolt.DB
 
 func Init() {
-	// spinner
-	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
-	s.Prefix = "Configuring DB "
-	s.FinalMSG = "DB configured!"
-	s.Start()
+	s := lib.CreateSpinner(
+		"Configuring DB",
+		"DB configured!",
+	)
 
-	// actual work
 	db, err := bolt.Open(properties.DBName, 0600, nil)
 	lib.HandleErr(err)
 	DB = db
