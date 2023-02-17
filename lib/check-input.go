@@ -30,3 +30,26 @@ func CheckInt(input string) error {
 	}
 	return nil
 }
+
+func CheckIntRange5to60(input string) error {
+	err := CheckInt(input)
+	if err != nil {
+		return err
+	}
+	num, _ := strconv.Atoi(input)
+	if num >= 5 && num <= 60 {
+		return nil
+	}
+	return errors.New(properties.ErrorStr("input should be 5 ~ 60"))
+}
+func CheckIntRange1to4(input string) error {
+	err := CheckInt(input)
+	if err != nil {
+		return err
+	}
+	num, _ := strconv.Atoi(input)
+	if num >= 1 && num <= 4 {
+		return nil
+	}
+	return errors.New(properties.ErrorStr("input should be 1 ~ 4"))
+}
