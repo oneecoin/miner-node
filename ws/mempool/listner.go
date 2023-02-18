@@ -50,7 +50,8 @@ func ListenForMining() {
 			"Transactions received!",
 		)
 
-		// request for transactions
+		// request transactions
+		requestTxs()
 
 		txs := <-mempool.transactionInbox
 

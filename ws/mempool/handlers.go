@@ -32,6 +32,15 @@ func handleMessage(m *messages.Message) {
 		err := json.Unmarshal(m.Payload, payload)
 		lib.HandleErr(err)
 		rejectPeer(payload.PeerAddress)
+
+	case messages.MessageTxsMempoolResponse:
+		payload := &messages.PayloadTxs{}
+		err := json.Unmarshal(m.Payload, payload)
+		lib.HandleErr(err)
+		mempool.transactionInbox <- payload.Txs
+
+	case messages.MessageTxsDeclined:
+		mempool.transactionInbox <- nil
 	}
 }
 
