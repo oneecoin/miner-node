@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"atomicgo.dev/cursor"
+	"github.com/onee-only/miner-node/blockchain/blocks"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
 	"github.com/onee-only/miner-node/ws/peers"
@@ -62,9 +63,9 @@ func ListenForMining() {
 		}
 		s.Stop()
 
-		// mine the transactions
+		block := blocks.MineTxs(&txs)
 
-		// broadcast the transactions to peer
+		// broadcast the block to peer
 	}
 }
 
