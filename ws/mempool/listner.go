@@ -65,9 +65,7 @@ func ListenForMining() {
 		block, invalidTxs := blocks.MineTxs(txs)
 		if block == nil {
 			s.FinalMSG = properties.ErrorStr("Invalid transaction(s) found and rejected")
-
 			requestInvalidTxs(invalidTxs)
-
 			shouldWait = false
 			s.Stop()
 			continue
