@@ -8,7 +8,6 @@ import (
 	"github.com/onee-only/miner-node/blockchain/blocks"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
-	"github.com/onee-only/miner-node/ws/peers"
 )
 
 func ListenForMining() {
@@ -21,7 +20,7 @@ func ListenForMining() {
 		intervalLoop:
 			for {
 				select {
-				case m := <-peers.Peers.C:
+				case m := <-properties.C:
 					if m == properties.MessageBlockchainUploading {
 						blocks.WaitForUpload()
 					}

@@ -8,7 +8,6 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
-	"github.com/onee-only/miner-node/ws/peers"
 )
 
 func WaitForUpload() {
@@ -17,7 +16,7 @@ func WaitForUpload() {
 		"Uploading blockchain",
 		"Blockchain successfully uploaded!",
 	)
-	m := <-peers.Peers.C
+	m := <-properties.C
 	if m == properties.MessageBlockchainUploaded {
 		s.Stop()
 	}

@@ -36,7 +36,7 @@ func StartDownloadingBlockChain() {
 	bytes, err := json.Marshal(m)
 	lib.HandleErr(err)
 	peer.Inbox <- bytes
-	<-Peers.C
+	<-properties.C
 }
 
 func downloadBlockchain(header []byte, conn *websocket.Conn) {
@@ -54,11 +54,11 @@ func downloadBlockchain(header []byte, conn *websocket.Conn) {
 	lib.HandleErr(err)
 
 	bar.Finish()
-	Peers.C <- properties.MessageBlockchainDownloaded
+	properties.C <- properties.MessageBlockchainDownloaded
 }
 
 func uploadBlockchain(p *Peer) {
-	Peers.C <- properties.MessageBlockchainUploading
+	properties.C <- properties.MessageBlockchainUploading
 	properties.IsDownloading = true
 	file, err := os.Open(properties.DBName)
 	lib.HandleErr(err)

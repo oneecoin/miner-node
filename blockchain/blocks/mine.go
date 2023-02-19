@@ -8,7 +8,6 @@ import (
 	"github.com/onee-only/miner-node/blockchain/transactions"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
-	"github.com/onee-only/miner-node/ws/peers"
 )
 
 const (
@@ -51,15 +50,15 @@ func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
 
 	for {
 		select {
-		case m := <-peers.Peers.C:
+		case m := <-properties.C:
 			if m == properties.MessageBlockchainUploading {
 				fmt.Println()
 				WaitForUpload()
 			} else if m == properties.MessageNewBlock {
-				blockBytes := 
-				// set the nonce to 0, and set the height and prevHash again
+				blockBytes :=
+					// set the nonce to 0, and set the height and prevHash again
 
-				fmt.Printf("\n%s\n", properties.WarningStr("New block broadcasted. Should reset config"))
+					fmt.Printf("\n%s\n", properties.WarningStr("New block broadcasted. Should reset config"))
 				printTable(len(txs), getLastHash())
 			}
 		default:
