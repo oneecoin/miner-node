@@ -56,7 +56,19 @@ func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
 				WaitForUpload()
 			} else if m == properties.MessageNewBlock {
 				blockBytes := <-properties.BlockInbox
-				// set the nonce to 0, and set the height and prevHash again
+				newBlock := &Block{}
+				lib.FromBytes(newBlock, blockBytes)
+
+				// should validate block
+
+				AddBlock(newBlock)
+				updateCurrentHeight(block.Height)
+				updateLastHash(block.Hash)
+
+				// set things of my block
+				block.PrevHash = getLastHash()
+				block.Height = getCurrentHeight() + 1
+				block.Nonce = 0
 
 				fmt.Printf("\n%s\n", properties.WarningStr("New block broadcasted. Should reset config"))
 				printTable(len(txs), getLastHash())
