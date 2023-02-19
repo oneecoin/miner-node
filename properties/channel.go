@@ -9,3 +9,8 @@ const (
 
 	MessageNewBlock
 )
+
+var (
+	C          = make(chan ChanMessageType)
+	BlockInbox = make(chan []byte)
+)

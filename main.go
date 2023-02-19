@@ -7,6 +7,7 @@ import (
 
 	"github.com/deiwin/interact"
 	"github.com/mbndr/figlet4go"
+	"github.com/onee-only/miner-node/blockchain/blocks"
 	"github.com/onee-only/miner-node/db"
 	"github.com/onee-only/miner-node/http"
 	"github.com/onee-only/miner-node/lib"
@@ -23,6 +24,7 @@ func main() {
 	peers.StartDownloadingBlockChain()
 	db.Init()
 	defer db.Close()
+	blocks.SaveBroadcastedBlocks()
 	mempool.ListenForMining()
 }
 

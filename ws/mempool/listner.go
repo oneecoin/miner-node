@@ -66,7 +66,7 @@ func ListenForMining() {
 			continue
 		}
 
-		// db.Addblock or something
+		blocks.AddBlock(block)
 		// broadcast the block to peer
 
 		shouldWait = true

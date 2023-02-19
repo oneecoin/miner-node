@@ -28,10 +28,6 @@ func Init() {
 
 	s.Stop()
 	properties.IsDownloading = false
-
-	// if new block broadcasted while downloading
-	// retrieve all blocks from queue
-	// and save it
 }
 
 func Close() {

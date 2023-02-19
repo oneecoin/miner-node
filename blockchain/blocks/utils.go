@@ -1,15 +1,11 @@
 package blocks
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
-	"encoding/hex"
 	"fmt"
 	"os"
 
 	"atomicgo.dev/cursor"
 	"github.com/olekukonko/tablewriter"
-	"github.com/onee-only/miner-node/blockchain/transactions"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
 	"github.com/onee-only/miner-node/ws/peers"
@@ -27,39 +23,6 @@ func WaitForUpload() {
 	}
 }
 
-func validateTx(tx *transactions.Tx) bool {
-
-	x, y, err := lib.RestoreBigInts(tx.TxIns.From)
-	if err != nil {
-		return false
-	}
-
-	hash, err := hex.DecodeString(tx.ID)
-	if err != nil {
-		return false
-	}
-
-	for _, txIn := range tx.TxIns.V {
-
-		// should see if there is actual transaction
-
-		r, s, err := lib.RestoreBigInts(txIn.Signature)
-		if err != nil {
-			return false
-		}
-
-		valid := ecdsa.Verify(&ecdsa.PublicKey{
-			Curve: elliptic.P256(),
-			X:     x,
-			Y:     y,
-		}, hash, r, s)
-		if !valid {
-			return false
-		}
-	}
-	return true
-}
-
 var tbl = tablewriter.NewWriter(os.Stdout)
 
 func printTable(txsCount int, prevHash string) {
@@ -67,7 +30,7 @@ func printTable(txsCount int, prevHash string) {
 	data := []string{
 		fmt.Sprintf("%d", difficulty),
 		fmt.Sprintf("%d", txsCount),
-		fmt.Sprintf("%d", currentHeight),
+		fmt.Sprintf("%d", getCurrentHeight()),
 		prevHash,
 	}
 

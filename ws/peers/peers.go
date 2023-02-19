@@ -15,13 +15,11 @@ import (
 type TPeers struct {
 	V map[string]*Peer
 	M sync.Mutex
-	C chan properties.ChanMessageType
 }
 
 var Peers *TPeers = &TPeers{
 	V: make(map[string]*Peer),
 	M: sync.Mutex{},
-	C: make(chan properties.ChanMessageType),
 }
 
 func Connect() {

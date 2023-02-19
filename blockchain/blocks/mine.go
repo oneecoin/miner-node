@@ -25,7 +25,7 @@ func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
 	// validate the signatures
 	invalidTxs := transactions.TxS{}
 	for _, tx := range txs {
-		if ok := validateTx(tx); !ok {
+		if ok := transactions.ValidateTx(tx); !ok {
 			invalidTxs = append(invalidTxs, tx)
 		}
 	}
@@ -37,8 +37,8 @@ func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
 	s.Stop()
 
 	block := &Block{
-		PrevHash:     lastHash,
-		Height:       currentHeight,
+		PrevHash:     getLastHash(),
+		Height:       getCurrentHeight() + 1,
 		Hash:         "",
 		Nonce:        0,
 		Timestamp:    0,
@@ -47,7 +47,7 @@ func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
 
 	target := strings.Repeat("0", difficulty)
 
-	printTable(len(txs), lastHash)
+	printTable(len(txs), getLastHash())
 
 	for {
 		select {
@@ -56,11 +56,11 @@ func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
 				fmt.Println()
 				WaitForUpload()
 			} else if m == properties.MessageNewBlock {
-				// if new block is here
+				blockBytes := 
 				// set the nonce to 0, and set the height and prevHash again
 
 				fmt.Printf("\n%s\n", properties.WarningStr("New block broadcasted. Should reset config"))
-				printTable(len(txs), lastHash)
+				printTable(len(txs), getLastHash())
 			}
 		default:
 
@@ -69,7 +69,6 @@ func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
 
 		if strings.HasPrefix(hash, target) {
 			block.Timestamp = int(time.Now().Local().Unix())
-			// create and broadcast block
 			printBlockStatus(block.Nonce, block.Hash)
 			break
 		}
