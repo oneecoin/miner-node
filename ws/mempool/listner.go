@@ -58,20 +58,15 @@ func ListenForMining() {
 		}
 		s.Stop()
 
-		s = lib.CreateSpinner(
-			"Validating transactions",
-			"Transactions validated!",
-		)
 		block, invalidTxs := blocks.MineTxs(txs)
 		if block == nil {
-			s.FinalMSG = properties.ErrorStr("Invalid transaction(s) found and rejected")
 			requestInvalidTxs(invalidTxs)
+			time.Sleep(time.Second) // just in case
 			shouldWait = false
-			s.Stop()
 			continue
 		}
-		s.Stop()
 
+		// db.Addblock or something
 		// broadcast the block to peer
 
 		shouldWait = true

@@ -5,7 +5,10 @@ import (
 	"crypto/elliptic"
 	"encoding/hex"
 	"fmt"
+	"os"
 
+	"atomicgo.dev/cursor"
+	"github.com/olekukonko/tablewriter"
 	"github.com/onee-only/miner-node/blockchain/transactions"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
@@ -38,7 +41,7 @@ func validateTx(tx *transactions.Tx) bool {
 
 	for _, txIn := range tx.TxIns.V {
 
-		// see if there is actual transaction
+		// should see if there is actual transaction
 
 		r, s, err := lib.RestoreBigInts(txIn.Signature)
 		if err != nil {
@@ -57,6 +60,27 @@ func validateTx(tx *transactions.Tx) bool {
 	return true
 }
 
-func printBlockStatus(block *Block) {
+var tbl = tablewriter.NewWriter(os.Stdout)
 
+func printTable(txsCount int, prevHash string) {
+
+	data := []string{
+		fmt.Sprintf("%d", difficulty),
+		fmt.Sprintf("%d", txsCount),
+		fmt.Sprintf("%d", currentHeight),
+		prevHash,
+	}
+
+	fmt.Println("Start hashing with:\n")
+	tbl.SetHeader([]string{"Difficulty", "Transactions", "Height", "PrevHash"})
+	tbl.ClearRows()
+	tbl.Append(data)
+	tbl.Render()
+	fmt.Printf("\n\n\n\n")
+}
+
+func printBlockStatus(nonce int, hash string) {
+	cursor.ClearLinesUp(2)
+	fmt.Println("NONCE\t\tHASH")
+	fmt.Printf("%d\t\t%s\n", nonce, hash)
 }
