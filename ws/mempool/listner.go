@@ -21,15 +21,7 @@ func ListenForMining() {
 			select {
 			case m := <-peers.Peers.C:
 				if m == properties.MessageBlockchainUploading {
-					fmt.Println("Blockchain upload requested")
-					s := lib.CreateSpinner(
-						"Uploading blockchain",
-						"Blockchain successfully uploaded!",
-					)
-					m = <-peers.Peers.C
-					if m == properties.MessageBlockchainUploaded {
-						s.Stop()
-					}
+					blocks.WaitForUpload()
 				}
 			default:
 				fmt.Printf("Waiting to mine blocks... %s / %s",

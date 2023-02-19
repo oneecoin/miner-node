@@ -26,6 +26,7 @@ const (
 	// etc.
 	MessageRejectPeer
 	MessagePeerRejected
+	MessageBlockAdded
 
 	// node-node
 
