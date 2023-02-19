@@ -13,33 +13,36 @@ import (
 
 func ListenForMining() {
 	interval := time.Minute * time.Duration(properties.CheckInterval)
+	shouldWait := true
 	for {
 		var spent time.Duration = 0
 
-	intervalLoop:
-		for {
-			select {
-			case m := <-peers.Peers.C:
-				if m == properties.MessageBlockchainUploading {
-					blocks.WaitForUpload()
+		if shouldWait {
+		intervalLoop:
+			for {
+				select {
+				case m := <-peers.Peers.C:
+					if m == properties.MessageBlockchainUploading {
+						blocks.WaitForUpload()
+					}
+				default:
+					fmt.Printf("Waiting to mine blocks... %s / %s",
+						properties.WarningStr(fmtDuration(spent)),
+						fmtDuration(interval))
+					if interval == spent {
+						break intervalLoop
+					}
+					time.Sleep(time.Second)
+					spent += time.Second
 				}
-			default:
-				fmt.Printf("Waiting to mine blocks... %s / %s",
-					properties.WarningStr(fmtDuration(spent)),
-					fmtDuration(interval))
-				if interval == spent {
-					break intervalLoop
-				}
-				time.Sleep(time.Second)
-				spent += time.Second
+				cursor.ClearLine()
 			}
-			cursor.ClearLine()
+			fmt.Println("Done waiting")
 		}
-		fmt.Println("Done waiting")
 		// time to mine some blocks
 
 		s := lib.CreateSpinner(
-			"Requesting transactions to mine ",
+			"Requesting transactions to mine",
 			"Transactions received!",
 		)
 
@@ -55,9 +58,25 @@ func ListenForMining() {
 		}
 		s.Stop()
 
-		block := blocks.MineTxs(&txs)
+		s = lib.CreateSpinner(
+			"Validating transactions",
+			"Transactions validated!",
+		)
+		block, invalidTxs := blocks.MineTxs(txs)
+		if block == nil {
+			s.FinalMSG = properties.ErrorStr("Invalid transaction(s) found and rejected")
+
+			requestInvalidTxs(invalidTxs)
+
+			shouldWait = false
+			s.Stop()
+			continue
+		}
+		s.Stop()
 
 		// broadcast the block to peer
+
+		shouldWait = true
 	}
 }
 

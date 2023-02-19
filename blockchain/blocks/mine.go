@@ -13,14 +13,27 @@ const (
 	difficulty = 4
 )
 
-func MineTxs(txs *transactions.TxS) *Block {
+func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
+
+	// validate the signatures
+	invalidTxs := transactions.TxS{}
+	for _, tx := range txs {
+		if ok := validateTx(tx); !ok {
+			invalidTxs = append(invalidTxs, tx)
+		}
+	}
+	if len(invalidTxs) != 0 {
+		// send some request
+		return nil, invalidTxs
+	}
+
 	block := &Block{
 		PrevHash:     lastHash,
 		Height:       currentHeight,
 		Hash:         "",
 		Nonce:        0,
 		Timestamp:    0,
-		Transactions: *txs,
+		Transactions: txs,
 	}
 
 	target := strings.Repeat("0", difficulty)
@@ -30,7 +43,7 @@ func MineTxs(txs *transactions.TxS) *Block {
 		case m := <-peers.Peers.C:
 			if m == properties.MessageBlockchainUploading {
 				WaitForUpload()
-			} else if m == 1 { // should change it
+			} else if m == properties.MessageNewBlock {
 				// if new block is here
 				// set the nonce to 0, and set the height and prevHash again
 			}
@@ -46,4 +59,6 @@ func MineTxs(txs *transactions.TxS) *Block {
 		printBlockStatus(block)
 		block.Nonce++
 	}
+
+	return block, nil
 }

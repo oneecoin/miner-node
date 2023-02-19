@@ -6,4 +6,6 @@ const (
 	MessageBlockchainDownloaded ChanMessageType = iota
 	MessageBlockchainUploading
 	MessageBlockchainUploaded
+
+	MessageNewBlock
 )

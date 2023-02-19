@@ -3,6 +3,7 @@ package mempool
 import (
 	"encoding/json"
 
+	"github.com/onee-only/miner-node/blockchain/transactions"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
 	"github.com/onee-only/miner-node/ws/messages"
@@ -24,4 +25,8 @@ func requestTxs() {
 	lib.HandleErr(err)
 
 	mempool.inbox <- mBytes
+}
+
+func requestInvalidTxs(txs transactions.TxS) {
+
 }
