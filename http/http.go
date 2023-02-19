@@ -65,10 +65,9 @@ func InitServer(port int) {
 
 	http.HandleFunc("/check", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
-			bytes, err := json.Marshal(struct{ PublicKey string }{
+			bytes := lib.ToJSON(struct{ PublicKey string }{
 				PublicKey: properties.PublicKey,
 			})
-			lib.HandleErr(err)
 			w.WriteHeader(http.StatusAccepted)
 			w.Write(bytes)
 		} else {
