@@ -2,7 +2,6 @@ package peers
 
 import (
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -33,8 +32,7 @@ func StartDownloadingBlockChain() {
 		Payload: nil,
 	}
 
-	bytes, err := json.Marshal(m)
-	lib.HandleErr(err)
+	bytes := lib.ToJSON(m)
 	peer.Inbox <- bytes
 	<-properties.C
 }

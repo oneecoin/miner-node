@@ -1,7 +1,6 @@
 package peers
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/gorilla/websocket"
@@ -47,8 +46,7 @@ func (p *Peer) read() {
 			if properties.IsDownloading && m.Kind == messages.MessageNewBlock {
 				// take this in the queue or something.
 			} else {
-				err := json.Unmarshal(payload, m)
-				lib.HandleErr(err)
+				lib.FromJSON(payload, m)
 				Peers.handleMessage(m, p)
 			}
 		}

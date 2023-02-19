@@ -1,8 +1,6 @@
 package mempool
 
 import (
-	"encoding/json"
-
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/ws/messages"
 )
@@ -11,32 +9,27 @@ func handleMessage(m *messages.Message) {
 	switch m.Kind {
 	case messages.MessageBlocksRequest:
 		payload := &messages.PayloadPage{}
-		err := json.Unmarshal(m.Payload, payload)
-		lib.HandleErr(err)
+		lib.FromJSON(m.Payload, payload)
 		sendBlocks(payload.Page)
 
 	case messages.MessageBlockRequest:
 		payload := &messages.PayloadHash{}
-		err := json.Unmarshal(m.Payload, payload)
-		lib.HandleErr(err)
+		lib.FromJSON(m.Payload, payload)
 		sendBlock(payload.Hash)
 
 	case messages.MessageUTxOutsRequest:
 		payload := &messages.PayloadUTxOutsFilter{}
-		err := json.Unmarshal(m.Payload, payload)
-		lib.HandleErr(err)
+		lib.FromJSON(m.Payload, payload)
 		sendUTxOuts(payload.PublicKey, payload.Amount)
 
 	case messages.MessagePeerRejected:
 		payload := &messages.PayloadPeer{}
-		err := json.Unmarshal(m.Payload, payload)
-		lib.HandleErr(err)
+		lib.FromJSON(m.Payload, payload)
 		rejectPeer(payload.PeerAddress)
 
 	case messages.MessageTxsMempoolResponse:
 		payload := &messages.PayloadTxs{}
-		err := json.Unmarshal(m.Payload, payload)
-		lib.HandleErr(err)
+		lib.FromJSON(m.Payload, payload)
 		mempool.transactionInbox <- payload.Txs
 
 	case messages.MessageTxsDeclined:
