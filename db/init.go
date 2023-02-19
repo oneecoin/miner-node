@@ -21,7 +21,7 @@ func Init() {
 	err = db.Update(func(tx *bolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists([]byte(properties.BucketBlockchain))
 		lib.HandleErr(err)
-		_, err = tx.CreateBucketIfNotExists([]byte(properties.BucketCheckpoint))
+		_, err = tx.CreateBucketIfNotExists([]byte(properties.BucketIndex))
 		return err
 	})
 	lib.HandleErr(err)

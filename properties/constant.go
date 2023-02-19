@@ -8,5 +8,5 @@ const (
 	// DB
 	DBName           = "blockchain.db"
 	BucketBlockchain = "blockchain"
-	BucketCheckpoint = "checkpoint"
+	BucketIndex      = "index"
 )

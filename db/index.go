@@ -8,35 +8,35 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
-type checkpoint struct {
-	hash     string
-	prevhash string
+type index struct {
+	hash  string
+	txIDs []string
 }
 
 func FindLastHash() string {
-	_, cp := findLatestCheckpoint()
+	_, cp := findLastIndex()
 	return cp.hash
 }
 
 func FindCurrentHeight() int {
-	height, _ := findLatestCheckpoint()
+	height, _ := findLastIndex()
 	return height
 }
 
-func findLatestCheckpoint() (int, *checkpoint) {
-	cp := &checkpoint{
-		hash:     "",
-		prevhash: "",
+func findLastIndex() (int, *index) {
+	idx := &index{
+		hash:  "",
+		txIDs: []string{},
 	}
 	height := 0
 	DB.View(func(tx *bolt.Tx) error {
-		c := tx.Bucket([]byte(properties.BucketCheckpoint)).Cursor()
+		c := tx.Bucket([]byte(properties.BucketIndex)).Cursor()
 		k, v := c.Last()
 		if k != nil {
 			height, _ = strconv.Atoi(string(k))
-			lib.FromBytes(cp, v)
+			lib.FromBytes(idx, v)
 		}
 		return nil
 	})
-	return height, cp
+	return height, idx
 }
