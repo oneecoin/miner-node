@@ -61,7 +61,7 @@ func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
 
 				// should validate block
 
-				AddBlock(newBlock)
+				Add
 				updateCurrentHeight(block.Height)
 				updateLastHash(block.Hash)
 
