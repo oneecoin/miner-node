@@ -124,7 +124,7 @@ func FindTxsByPublicKey(publicKey string) transactions.TxS {
 	return txs
 }
 
-func FindUTxOutsByPublicKey(publicKey string, amount int) (transactions.UTxOutS, bool) {
+func FindUTxOutsByPublicKey(publicKey string, amount int) (transactions.UTxOutS, bool, int) {
 	spentAt := db.FindHashesFrom(publicKey)
 	earnedAt := db.FindHashesTo(publicKey)
 
@@ -169,7 +169,12 @@ func FindUTxOutsByPublicKey(publicKey string, amount int) (transactions.UTxOutS,
 	}
 
 	if amount > got {
-		return nil, false
+		return nil, false, 0
 	}
-	return uTxOuts, true
+	return uTxOuts, true, got
+}
+
+func FindBalanceByPublicKey(publicKey string) int {
+	_, _, balance := FindUTxOutsByPublicKey(publicKey, 0)
+	return balance
 }

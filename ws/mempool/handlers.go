@@ -2,6 +2,7 @@ package mempool
 
 import (
 	"github.com/onee-only/miner-node/blockchain/blocks"
+	"github.com/onee-only/miner-node/blockchain/transactions"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
 	"github.com/onee-only/miner-node/ws/messages"
@@ -49,6 +50,18 @@ func handleMessage(m *messages.Message) {
 		}
 
 		mempool.inbox <- lib.ToJSON(m)
+	case messages.MessageBalanceRequest:
+		payload := &messages.PayloadHash{}
+		lib.FromJSON(m.Payload, payload)
+
+		balance := blocks.FindBalanceByPublicKey(payload.Hash)
+
+		m := messages.Message{
+			Kind:    messages.MessageBalanceResponse,
+			Payload: lib.ToJSON(messages.PayloadCount{Count: balance}),
+		}
+
+		mempool.inbox <- lib.ToJSON(m)
 	}
 }
 
@@ -72,11 +85,23 @@ func sendBlock(hash string) {
 
 func sendUTxOuts(publicKey string, amount int) {
 
-	uTxOuts, available := blocks.FindUTxOutsByPublicKey(publicKey, amount)
+	uTxOuts, available, _ := blocks.FindUTxOutsByPublicKey(publicKey, amount)
+	need := transactions.UTxOutS{}
+
+	if available {
+		got := 0
+		for _, uTxOut := range uTxOuts {
+			if got >= amount {
+				break
+			}
+			got += uTxOut.Amount
+			need = append(need, uTxOut)
+		}
+	}
 
 	payload := messages.PayloadUTxOuts{
 		Available: available,
-		UTxOuts:   uTxOuts,
+		UTxOuts:   need,
 	}
 
 	m := messages.Message{
