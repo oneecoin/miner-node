@@ -8,9 +8,14 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
+type indexTx struct {
+	from string
+	to   string
+}
+
 type index struct {
-	hash  string
-	txIDs []string
+	hash string
+	txs  []indexTx
 }
 
 func FindLastHash() string {
@@ -25,8 +30,8 @@ func FindCurrentHeight() int {
 
 func findLastIndex() (int, *index) {
 	idx := &index{
-		hash:  "",
-		txIDs: []string{},
+		hash: "",
+		txs:  []indexTx{},
 	}
 	height := 0
 	DB.View(func(tx *bolt.Tx) error {
