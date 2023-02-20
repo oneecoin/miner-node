@@ -11,6 +11,7 @@ const (
 )
 
 var (
-	C          = make(chan ChanMessageType)
-	BlockInbox = make(chan []byte)
+	C                   = make(chan ChanMessageType)
+	BlockReceiveInbox   = make(chan []byte)
+	BlockBroadcastInbox = make(chan []byte)
 )

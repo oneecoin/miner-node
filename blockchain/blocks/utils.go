@@ -46,3 +46,13 @@ func printBlockStatus(nonce int, hash string) {
 	fmt.Println("NONCE\t\tHASH")
 	fmt.Printf("%d\t\t%s\n", nonce, hash)
 }
+
+func HandleNewBlock() {
+	blockBytes := <-properties.BlockReceiveInbox
+	newBlock := &Block{}
+	lib.FromBytes(newBlock, blockBytes)
+
+	AddBlock(newBlock)
+	updateCurrentHeight(newBlock.Height)
+	updateLastHash(newBlock.Hash)
+}

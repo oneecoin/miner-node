@@ -23,6 +23,8 @@ func ListenForMining() {
 				case m := <-properties.C:
 					if m == properties.MessageBlockchainUploading {
 						blocks.WaitForUpload()
+					} else if m == properties.MessageNewBlock {
+						blocks.HandleNewBlock()
 					}
 				default:
 					fmt.Printf("Waiting to mine blocks... %s / %s",
@@ -66,7 +68,7 @@ func ListenForMining() {
 		}
 
 		blocks.AddBlock(block)
-		// broadcast the block to peer
+		properties.BlockBroadcastInbox <- lib.ToBytes(block)
 
 		shouldWait = true
 	}

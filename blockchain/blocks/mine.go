@@ -55,15 +55,8 @@ func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
 				fmt.Println()
 				WaitForUpload()
 			} else if m == properties.MessageNewBlock {
-				blockBytes := <-properties.BlockInbox
-				newBlock := &Block{}
-				lib.FromBytes(newBlock, blockBytes)
-				
-				ValidateBlock(newBlock)
-				
-				AddBlock(newBlock)
-				updateCurrentHeight(block.Height)
-				updateLastHash(block.Hash)
+
+				HandleNewBlock()
 
 				// set things of my block
 				block.PrevHash = getLastHash()
