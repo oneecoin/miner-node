@@ -7,6 +7,7 @@ import (
 	"github.com/onee-only/miner-node/blockchain/transactions"
 	"github.com/onee-only/miner-node/db"
 	"github.com/onee-only/miner-node/lib"
+	"github.com/onee-only/miner-node/properties"
 )
 
 var BlocksQueue []*Block = []*Block{}
@@ -69,4 +70,31 @@ func AddBlock(block *Block) {
 	}
 
 	db.AddIndex(block.Height, block.Hash, txs)
+}
+
+func FindBlocksWithPage(page int) []byte {
+	start := getCurrentHeight() - (properties.DefaultPageSize * (page - 1))
+	hash := db.FindHashByHeight(start)
+	bytes := db.FindBlocksPageByHash(hash)
+
+	var blocks []Block
+
+	for _, blockBytes := range bytes {
+		var block Block
+		lib.FromBytes(block, blockBytes)
+		blocks = append(blocks, block)
+	}
+	blocksJson := lib.ToJSON(blocks)
+	return blocksJson
+}
+
+func FindBlock(hash string) []byte {
+	var block Block
+	bytes := db.FindBlockByHash(hash)
+	lib.FromBytes(block, bytes)
+	return lib.ToJSON(block)
+}
+
+func FindUTxOutsByPublicKey(publicKey string, amount int) (transactions.UTxOutS, bool) {
+	hashes := db.findhash
 }

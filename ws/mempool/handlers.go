@@ -1,8 +1,10 @@
 package mempool
 
 import (
+	"github.com/onee-only/miner-node/blockchain/blocks"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/ws/messages"
+	"github.com/onee-only/miner-node/ws/peers"
 )
 
 func handleMessage(m *messages.Message) {
@@ -38,17 +40,41 @@ func handleMessage(m *messages.Message) {
 }
 
 func sendBlocks(page int) {
+	m := messages.Message{
+		Kind:    messages.MessageBlocksResponse,
+		Payload: blocks.FindBlocksWithPage(page),
+	}
 
+	mempool.inbox <- lib.ToJSON(m)
 }
 
 func sendBlock(hash string) {
+	m := messages.Message{
+		Kind:    messages.MessageBlockResponse,
+		Payload: blocks.FindBlock(hash),
+	}
 
+	mempool.inbox <- lib.ToJSON(m)
 }
 
 func sendUTxOuts(publicKey string, amount int) {
 
+	uTxOuts, available := blocks.FindUTxOutsByPublicKey(publicKey, amount)
+
+	payload := messages.PayloadUTxOuts{
+		Available: available,
+		UTxOuts:   uTxOuts,
+	}
+
+	m := messages.Message{
+		Kind:    messages.MessageUTxOutsResponse,
+		Payload: lib.ToJSON(payload),
+	}
+
+	mempool.inbox <- lib.ToJSON(m)
 }
 
 func rejectPeer(address string) {
-
+	peer := peers.Peers.V[address]
+	close(peer.Inbox)
 }

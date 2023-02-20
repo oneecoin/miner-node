@@ -27,11 +27,11 @@ const (
 	MessageRejectPeer
 	MessagePeerRejected
 	MessageBlockAdded
+	MessageNewBlock
 
 	// node-node
 
 	// download blockchain
 	MessageDownloadRequest
 
-	MessageNewBlock
 )
