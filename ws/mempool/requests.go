@@ -24,7 +24,16 @@ func requestTxs() {
 }
 
 func requestInvalidTxs(txs transactions.TxS) {
+	payload := messages.PayloadTxs{
+		Txs: txs,
+	}
 
+	m := messages.Message{
+		Kind:    messages.MessageInvalidTxsRequest,
+		Payload: lib.ToJSON(payload),
+	}
+
+	mempool.inbox <- lib.ToJSON(m)
 }
 
 func listenRequestRejectPeer() {
