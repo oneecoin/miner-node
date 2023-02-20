@@ -1,8 +1,6 @@
 package mempool
 
 import (
-	"encoding/json"
-
 	"github.com/onee-only/miner-node/blockchain/transactions"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
@@ -13,20 +11,37 @@ func requestTxs() {
 	payload := messages.PayloadCount{
 		Count: properties.MinTxs,
 	}
-	payloadBytes, err := json.Marshal(&payload)
-	lib.HandleErr(err)
+	payloadBytes := lib.ToJSON(&payload)
 
 	m := messages.Message{
 		Kind:    messages.MessageMempoolTxsRequest,
 		Payload: payloadBytes,
 	}
 
-	mBytes, err := json.Marshal(&m)
-	lib.HandleErr(err)
+	mBytes := lib.ToJSON(&m)
 
 	mempool.inbox <- mBytes
 }
 
 func requestInvalidTxs(txs transactions.TxS) {
 
+}
+
+func listenRequestRejectPeer() {
+	for {
+		address := <-properties.RejectPeerInbox
+
+		m := messages.Message{
+			Kind:    messages.MessageRejectPeer,
+			Payload: lib.ToJSON(messages.PayloadPeer{PeerAddress: address}),
+		}
+
+		mempool.inbox <- lib.ToJSON(m)
+	}
+}
+
+func listenRequestNewBlock() {
+	for {
+		block := <-properties.NewBlockInbox
+	}
 }

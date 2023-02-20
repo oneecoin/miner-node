@@ -49,6 +49,7 @@ func Connect() {
 
 		Peers.InitPeer(p)
 	}
+	go listenBlockBroadcast()
 	s.Stop()
 }
 

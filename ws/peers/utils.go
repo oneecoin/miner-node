@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/onee-only/miner-node/lib"
+	"github.com/onee-only/miner-node/properties"
 )
 
 func getRandomPeer() *Peer {
@@ -38,4 +39,11 @@ func (r *WebSocketReader) Read(p []byte) (int, error) {
 		return 0, io.EOF
 	}
 	return copy(p, payload), nil
+}
+
+func listenBlockBroadcast() {
+	for {
+		block := <-properties.BlockBroadcastInbox
+		
+	}
 }

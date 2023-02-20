@@ -26,12 +26,10 @@ const (
 	// etc.
 	MessageRejectPeer
 	MessagePeerRejected
-	MessageBlockAdded
 	MessageNewBlock
 
 	// node-node
 
 	// download blockchain
 	MessageDownloadRequest
-
 )

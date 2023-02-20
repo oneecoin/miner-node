@@ -48,5 +48,7 @@ func Connect() {
 	mempool.conn = conn
 	go mempool.read()
 	go mempool.write()
+	go listenRequestNewBlock()
+	go listenRequestRejectPeer()
 	s.Stop()
 }
