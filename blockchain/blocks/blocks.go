@@ -3,6 +3,7 @@ package blocks
 import (
 	"crypto/sha256"
 	"fmt"
+	"sort"
 
 	"github.com/onee-only/miner-node/blockchain/transactions"
 	"github.com/onee-only/miner-node/db"
@@ -84,7 +85,11 @@ func FindBlocksWithPage(page int) []byte {
 		lib.FromBytes(block, blockBytes)
 		blocks = append(blocks, block)
 	}
-	// should sort it
+
+	sort.Slice(blocks, func(i, j int) bool {
+		return blocks[i].Timestamp > blocks[j].Timestamp
+	})
+
 	blocksJson := lib.ToJSON(blocks)
 	return blocksJson
 }
@@ -94,6 +99,29 @@ func FindBlock(hash string) []byte {
 	bytes := db.FindBlockByHash(hash)
 	lib.FromBytes(block, bytes)
 	return lib.ToJSON(block)
+}
+
+func FindTxsByPublicKey(publicKey string) transactions.TxS {
+	hashes := db.FindHashesAll(publicKey)
+	bytes := db.FindBlocksByHashes(hashes)
+
+	txs := transactions.TxS{}
+
+	for _, blockBytes := range bytes {
+		var block Block
+		lib.FromBytes(block, blockBytes)
+		for _, tx := range block.Transactions {
+			if tx.TxIns.From == publicKey || tx.TxOuts[0].PublicKey == publicKey {
+				txs = append(txs, tx)
+			}
+		}
+	}
+
+	sort.Slice(txs, func(i, j int) bool {
+		return txs[i].Timestamp > txs[j].Timestamp
+	})
+
+	return txs
 }
 
 func FindUTxOutsByPublicKey(publicKey string, amount int) (transactions.UTxOutS, bool) {
