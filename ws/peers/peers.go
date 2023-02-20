@@ -50,6 +50,7 @@ func Connect() {
 		Peers.InitPeer(p)
 	}
 	go listenBlockBroadcast()
+	go listenPeerRejected()
 	s.Stop()
 }
 

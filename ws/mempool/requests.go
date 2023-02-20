@@ -42,6 +42,15 @@ func listenRequestRejectPeer() {
 
 func listenRequestNewBlock() {
 	for {
-		block := <-properties.NewBlockInbox
+		address := <-properties.NewBlockInbox
+
+		m := messages.Message{
+			Kind: messages.MessageNewBlock,
+			Payload: lib.ToJSON(messages.PayloadPeer{
+				PeerAddress: address,
+			}),
+		}
+
+		mempool.inbox <- lib.ToJSON(m)
 	}
 }
