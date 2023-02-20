@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"github.com/onee-only/miner-node/blockchain/transactions"
+	"github.com/onee-only/miner-node/db"
+	"github.com/onee-only/miner-node/lib"
 )
 
 func HashBlock(block *Block) string {
@@ -43,5 +45,18 @@ func SaveBroadcastedBlocks() {
 }
 
 func AddBlock(block *Block) {
+	// block
+	db.AddBlock(lib.ToBytes(block))
 
+	// index
+	txs := []db.IndexTx{}
+
+	for _, tx := range block.Transactions {
+		txs = append(txs, db.IndexTx{
+			From: tx.TxIns.From,
+			To:   tx.TxOuts[0].PublicKey,
+		})
+	}
+
+	db.AddIndex(block.Height, block.Hash, txs)
 }
