@@ -37,7 +37,10 @@ func ListenForMining() {
 					spent += time.Second
 				}
 				cursor.ClearLine()
+				cursor.StartOfLine()
 			}
+			cursor.ClearLine()
+			cursor.StartOfLine()
 			fmt.Println("Done waiting")
 		}
 		// time to mine some blocks
