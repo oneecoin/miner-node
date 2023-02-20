@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gorilla/websocket"
+	"github.com/onee-only/miner-node/blockchain/blocks"
 	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
 	"github.com/onee-only/miner-node/ws/messages"
@@ -44,7 +45,9 @@ func (p *Peer) read() {
 			downloadBlockchain(payload, p.Conn)
 		} else {
 			if properties.IsDownloading && m.Kind == messages.MessageNewBlock {
-				// take this in the queue or something.
+				block := &blocks.Block{}
+				lib.FromBytes(block, m.Payload)
+				blocks.BlocksQueue = append(blocks.BlocksQueue, block)
 			} else {
 				lib.FromJSON(payload, m)
 				Peers.handleMessage(m, p)

@@ -9,6 +9,8 @@ import (
 	"github.com/onee-only/miner-node/lib"
 )
 
+var BlocksQueue []*Block = []*Block{}
+
 func HashBlock(block *Block) string {
 	hash := sha256.Sum256([]byte(fmt.Sprintf("%v", block)))
 	return fmt.Sprintf("%x", hash)
@@ -41,7 +43,15 @@ func ValidateBlock(block *Block) bool {
 }
 
 func SaveBroadcastedBlocks() {
-
+	if len(BlocksQueue) != 0 {
+		for _, block := range BlocksQueue {
+			if valid := ValidateBlock(block); valid {
+				AddBlock(block)
+				updateCurrentHeight(block.Height)
+				updateLastHash(block.Hash)
+			}
+		}
+	}
 }
 
 func AddBlock(block *Block) {
