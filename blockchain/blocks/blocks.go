@@ -56,7 +56,7 @@ func SaveBroadcastedBlocks() {
 
 func AddBlock(block *Block) {
 	// block
-	db.AddBlock(lib.ToBytes(block))
+	db.AddBlock(block.Hash, lib.ToBytes(block))
 
 	// index
 	txs := []db.IndexTx{}
