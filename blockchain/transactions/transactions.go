@@ -20,6 +20,10 @@ func ValidateTx(tx *Tx) bool {
 		return false
 	}
 
+	if tx.TxIns.From == "COINBASE" {
+		return true
+	}
+
 	for _, txIn := range tx.TxIns.V {
 
 		// should see if there is actual transaction

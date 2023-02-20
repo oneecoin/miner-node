@@ -58,10 +58,10 @@ func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
 				blockBytes := <-properties.BlockInbox
 				newBlock := &Block{}
 				lib.FromBytes(newBlock, blockBytes)
-
-				// should validate block
-
-				Add
+				
+				ValidateBlock(newBlock)
+				
+				AddBlock(newBlock)
 				updateCurrentHeight(block.Height)
 				updateLastHash(block.Hash)
 
