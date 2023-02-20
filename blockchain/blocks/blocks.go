@@ -84,6 +84,7 @@ func FindBlocksWithPage(page int) []byte {
 		lib.FromBytes(block, blockBytes)
 		blocks = append(blocks, block)
 	}
+	// should sort it
 	blocksJson := lib.ToJSON(blocks)
 	return blocksJson
 }
@@ -96,5 +97,51 @@ func FindBlock(hash string) []byte {
 }
 
 func FindUTxOutsByPublicKey(publicKey string, amount int) (transactions.UTxOutS, bool) {
-	hashes := db.findhash
+	spentAt := db.FindHashesFrom(publicKey)
+	earnedAt := db.FindHashesTo(publicKey)
+
+	spentMap := make(map[string]string)
+	uTxOuts := transactions.UTxOutS{}
+	got := 0
+
+	bytes := db.FindBlocksByHashes(spentAt)
+	for _, blockBytes := range bytes {
+		var block Block
+		lib.FromBytes(block, blockBytes)
+		for _, tx := range block.Transactions {
+			if tx.TxIns.From == publicKey {
+				for _, txIn := range tx.TxIns.V {
+					spentMap[txIn.BlockHash] = txIn.TxID
+				}
+			}
+		}
+	}
+
+	bytes = db.FindBlocksByHashes(earnedAt)
+	for _, blockBytes := range bytes {
+		var block Block
+		lib.FromBytes(block, blockBytes)
+		for _, tx := range block.Transactions {
+			for index, txOut := range tx.TxOuts {
+				if txOut.PublicKey == publicKey {
+					txId, exists := spentMap[block.Hash]
+					if exists && tx.ID == txId {
+						continue
+					}
+					got += txOut.Amount
+					uTxOuts = append(uTxOuts, &transactions.UTxOut{
+						BlockHash: block.Hash,
+						TxID:      tx.ID,
+						Index:     index,
+						Amount:    txOut.Amount,
+					})
+				}
+			}
+		}
+	}
+
+	if amount > got {
+		return nil, false
+	}
+	return uTxOuts, true
 }
