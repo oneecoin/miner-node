@@ -2,6 +2,7 @@ package mempool
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/onee-only/miner-node/blockchain/transactions"
@@ -42,6 +43,10 @@ func Connect() {
 		"Connecting to mempool server",
 		"Mempool server connected!",
 	)
+
+	// just in case that server is not initialized.
+	// might have to use chan or something.
+	time.Sleep(time.Second)
 
 	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws?port=%d&publicKey=%s", properties.MempoolAddress, properties.Port, properties.PublicKey), nil)
 	lib.HandleErr(err)
