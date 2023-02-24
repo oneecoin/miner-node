@@ -101,6 +101,13 @@ func FindBlock(hash string) []byte {
 	return lib.ToJSON(block)
 }
 
+func FindLatestBlock() []byte {
+	var block Block
+	bytes := db.FindBlockByHash(lastHash)
+	lib.FromBytes(block, bytes)
+	return lib.ToJSON(block)
+}
+
 func FindTxsByPublicKey(publicKey string) transactions.TxS {
 	hashes := db.FindHashesAll(publicKey)
 	bytes := db.FindBlocksByHashes(hashes)

@@ -16,9 +16,13 @@ func handleMessage(m *messages.Message) {
 		sendBlocks(payload.Page)
 
 	case messages.MessageBlockRequest:
-		payload := &messages.PayloadHash{}
-		lib.FromJSON(m.Payload, payload)
-		sendBlock(payload.Hash)
+		if m.Payload != nil {
+			payload := &messages.PayloadHash{}
+			lib.FromJSON(m.Payload, payload)
+			sendBlock(payload.Hash)
+		} else {
+			sendLatest()
+		}
 
 	case messages.MessageUTxOutsRequest:
 		payload := &messages.PayloadUTxOutsFilter{}
@@ -78,6 +82,15 @@ func sendBlock(hash string) {
 	m := messages.Message{
 		Kind:    messages.MessageBlockResponse,
 		Payload: blocks.FindBlock(hash),
+	}
+
+	mempool.inbox <- lib.ToJSON(m)
+}
+
+func sendLatest() {
+	m := messages.Message{
+		Kind:    messages.MessageBlockResponse,
+		Payload: blocks.FindLatestBlock(),
 	}
 
 	mempool.inbox <- lib.ToJSON(m)
