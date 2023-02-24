@@ -10,3 +10,10 @@ type Block struct {
 	Timestamp    int              `json:"timestamp"`
 	Transactions transactions.TxS `json:"transactions"`
 }
+
+type BlockSummary struct {
+	Hash              string `json:"hash"`
+	Height            int    `json:"height"`
+	Timestamp         int    `json:"timestamp"`
+	TransactionsCount int    `json:"transactionsCount"`
+}

@@ -78,12 +78,18 @@ func FindBlocksWithPage(page int) []byte {
 	hash := db.FindHashByHeight(start)
 	bytes := db.FindBlocksPageByHash(hash)
 
-	var blocks []Block
+	var blocks []BlockSummary
 
 	for _, blockBytes := range bytes {
 		var block Block
 		lib.FromBytes(block, blockBytes)
-		blocks = append(blocks, block)
+		blockSummary := BlockSummary{
+			Hash:              block.Hash,
+			Height:            block.Height,
+			Timestamp:         block.Timestamp,
+			TransactionsCount: len(block.Transactions),
+		}
+		blocks = append(blocks, blockSummary)
 	}
 
 	sort.Slice(blocks, func(i, j int) bool {
