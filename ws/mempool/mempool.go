@@ -2,6 +2,7 @@ package mempool
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -48,8 +49,14 @@ func Connect() {
 	// might have to use chan or something.
 	time.Sleep(time.Second)
 
-	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws?port=%d&publicKey=%s", properties.MempoolAddress, properties.Port, properties.PublicKey), nil)
-	lib.HandleErr(err)
+	conn, resp, err := websocket.DefaultDialer.Dial(fmt.Sprintf("wss://%s/ws?port=%d&publicKey=%s", properties.MempoolAddress, properties.Port, properties.PublicKey), nil)
+	if err != nil {
+		if err == websocket.ErrBadHandshake {
+			fmt.Printf("handshake failed with status %d\n", resp.StatusCode)
+			os.Exit(1)
+		}
+		panic(err)
+	}
 	mempool.conn = conn
 	go mempool.read()
 	go mempool.write()

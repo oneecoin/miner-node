@@ -24,7 +24,13 @@ func InitServer(port int) {
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		publicKey := r.URL.Query().Get("publicKey")
 		port := r.URL.Query().Get("port")
-		host := strings.Split(r.RemoteAddr, ":")[0]
+		host := r.Header.Get("X-Forwarded-For")
+		if host != "" {
+			host = strings.Split(host, ", ")[0]
+		} else {
+			// If the X-Forwarded-For header is not available, get the IP address from the RemoteAddr field
+			host = strings.Split(r.RemoteAddr, ":")[0]
+		}
 		address := fmt.Sprintf("%s:%s", host, port)
 
 		wsUpgrader.CheckOrigin = func(r *http.Request) bool {
@@ -74,6 +80,13 @@ func InitServer(port int) {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 	})
+
+	// url := "https://api.ipify.org"
+	// resp, err := http.Get(url)
+	// lib.HandleErr(err)
+	// defer resp.Body.Close()
+	// ip, err := ioutil.ReadAll(resp.Body)
+	// lib.HandleErr(err)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	lib.HandleErr(err)

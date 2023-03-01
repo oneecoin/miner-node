@@ -29,13 +29,13 @@ func Connect() {
 	)
 
 	var peerList []string
-	res, err := http.Get(fmt.Sprintf("http://%s/peers?port=%d", properties.MempoolAddress, properties.Port))
+	res, err := http.Get(fmt.Sprintf("https://%s/peers?port=%d", properties.MempoolAddress, properties.Port))
 	lib.HandleErr(err)
 	err = json.NewDecoder(res.Body).Decode(&peerList)
 	lib.HandleErr(err)
 
 	for _, address := range peerList {
-		conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws?port=%d&publicKey=%s", address, properties.Port, properties.PublicKey), nil)
+		conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("wss://%s/ws?port=%d&publicKey=%s", address, properties.Port, properties.PublicKey), nil)
 		lib.HandleErr(err)
 
 		p := &Peer{
