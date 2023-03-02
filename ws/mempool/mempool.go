@@ -26,7 +26,8 @@ func (tMempool) read() {
 	defer mempool.conn.Close()
 	for {
 		m := &messages.Message{}
-		mempool.conn.ReadJSON(m)
+		err := mempool.conn.ReadJSON(m)
+		lib.HandleErr(err)
 		handleMessage(m)
 	}
 }

@@ -3,7 +3,7 @@ package properties
 const (
 	// etc
 	DefaultPageSize = 10
-	MempoolAddress  = "oneecoin-mempool-manager.onrender.com"
+	MempoolAddress  = "localhost:8080"
 
 	// DB
 	DBName           = "blockchain.db"
