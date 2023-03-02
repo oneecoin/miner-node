@@ -20,7 +20,8 @@ type tMempool struct {
 }
 
 var mempool tMempool = tMempool{
-	inbox: make(chan []byte),
+	inbox:            make(chan []byte),
+	transactionInbox: make(chan transactions.TxS),
 }
 
 func (tMempool) read() {

@@ -54,7 +54,7 @@ func ListenForMining() {
 		requestTxs()
 
 		txs := <-mempool.transactionInbox
-		if txs[0].ID == "" {
+		if txs == nil {
 			s.FinalMSG = properties.ErrorStr("Rejected due to lack of transactions")
 			s.Stop()
 			continue

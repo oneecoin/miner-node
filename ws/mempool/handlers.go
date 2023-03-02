@@ -44,7 +44,7 @@ func handleMessage(m *messages.Message) {
 		mempool.transactionInbox <- payload.Txs
 
 	case messages.MessageTxsDeclined:
-		mempool.transactionInbox <- transactions.TxS{&transactions.Tx{}}
+		mempool.transactionInbox <- nil
 	case messages.MessageNodeTxsRequest:
 		payload := &messages.PayloadHash{}
 		lib.FromJSON(m.Payload, payload)
