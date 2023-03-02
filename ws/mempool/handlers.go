@@ -1,6 +1,8 @@
 package mempool
 
 import (
+	"log"
+
 	"github.com/onee-only/miner-node/blockchain/blocks"
 	"github.com/onee-only/miner-node/blockchain/transactions"
 	"github.com/onee-only/miner-node/lib"
@@ -37,6 +39,7 @@ func handleMessage(m *messages.Message) {
 	case messages.MessageTxsMempoolResponse:
 		payload := &messages.PayloadTxs{}
 		lib.FromJSON(m.Payload, payload)
+		log.Println("got transactions !!")
 		mempool.transactionInbox <- payload.Txs
 
 	case messages.MessageTxsDeclined:
