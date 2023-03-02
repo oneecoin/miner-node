@@ -11,13 +11,17 @@ import (
 )
 
 func handleMessage(m *messages.Message) {
+	log.Println("handling message")
+	log.Println("message kind: ", m.Kind, "payload: ", string(m.Payload))
 	switch m.Kind {
 	case messages.MessageBlocksRequest:
+		log.Println("handling message1")
 		payload := &messages.PayloadPage{}
 		lib.FromJSON(m.Payload, payload)
 		sendBlocks(payload.Page)
 
 	case messages.MessageBlockRequest:
+		log.Println("handling message2")
 		if m.Payload != nil {
 			payload := &messages.PayloadHash{}
 			lib.FromJSON(m.Payload, payload)
@@ -27,28 +31,34 @@ func handleMessage(m *messages.Message) {
 		}
 
 	case messages.MessageUTxOutsRequest:
+		log.Println("handling message3")
 		payload := &messages.PayloadUTxOutsFilter{}
 		lib.FromJSON(m.Payload, payload)
 		sendUTxOuts(payload.PublicKey, payload.Amount)
 
 	case messages.MessagePeerRejected:
+		log.Println("handling message4")
 		payload := &messages.PayloadPeer{}
 		lib.FromJSON(m.Payload, payload)
 		rejectPeer(payload.PeerAddress)
 
 	case messages.MessageTxsMempoolResponse:
+		log.Println("handling message5")
 		payload := &messages.PayloadTxs{}
 		lib.FromJSON(m.Payload, payload)
 		log.Println("got transactions !!")
 		mempool.transactionInbox <- payload.Txs
 
 	case messages.MessageTxsDeclined:
+		log.Println("handling message6")
 		mempool.transactionInbox <- nil
 	case messages.MessageNodeTxsRequest:
+		log.Println("handling message7")
 		payload := &messages.PayloadHash{}
 		lib.FromJSON(m.Payload, payload)
 
 		txs := blocks.FindTxsByPublicKey(payload.Hash)
+		log.Println("handling message8")
 		m := messages.Message{
 			Kind: messages.MessageNodeTxsResponse,
 			Payload: lib.ToJSON(messages.PayloadTxs{
@@ -58,6 +68,7 @@ func handleMessage(m *messages.Message) {
 
 		mempool.inbox <- lib.ToJSON(m)
 	case messages.MessageBalanceRequest:
+		log.Println("handling message9")
 		payload := &messages.PayloadHash{}
 		lib.FromJSON(m.Payload, payload)
 
@@ -70,6 +81,7 @@ func handleMessage(m *messages.Message) {
 
 		mempool.inbox <- lib.ToJSON(m)
 	}
+	log.Println("message kind was: ", m.Kind)
 }
 
 func sendBlocks(page int) {
