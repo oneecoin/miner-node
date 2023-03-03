@@ -17,14 +17,14 @@ type IndexTx struct {
 	To   string
 }
 
-type index struct {
-	hash string
-	txs  []IndexTx
+type Index struct {
+	Hash string
+	Txs  []IndexTx
 }
 
 func FindLastHash() string {
 	_, cp := findLastIndex()
-	return cp.hash
+	return cp.Hash
 }
 
 func FindCurrentHeight() int {
@@ -32,10 +32,10 @@ func FindCurrentHeight() int {
 	return height
 }
 
-func findLastIndex() (int, *index) {
-	idx := &index{
-		hash: "",
-		txs:  []IndexTx{},
+func findLastIndex() (int, *Index) {
+	idx := &Index{
+		Hash: "",
+		Txs:  []IndexTx{},
 	}
 	height := 0
 	DB.View(func(tx *bolt.Tx) error {
@@ -51,9 +51,9 @@ func findLastIndex() (int, *index) {
 }
 
 func AddIndex(height int, hash string, txs []IndexTx) {
-	idx := &index{
-		hash: hash,
-		txs:  txs,
+	idx := &Index{
+		Hash: hash,
+		Txs:  txs,
 	}
 	DB.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(properties.BucketIndex))
@@ -68,9 +68,9 @@ func FindHashByHeight(height int) string {
 		c := tx.Bucket([]byte(properties.BucketIndex)).Cursor()
 		_, v := c.Seek([]byte(strconv.Itoa(height)))
 		if v != nil {
-			idx := &index{}
+			idx := &Index{}
 			lib.FromBytes(idx, v)
-			hash = idx.hash
+			hash = idx.Hash
 		}
 		return nil
 	})
@@ -166,7 +166,7 @@ func FindHashesAll(publicKey string) []string {
 
 func iterate(cursor *bolt.Cursor, ch chan<- string, done chan<- bool, start int, from, to string) {
 	cnt := 0
-	idx := &index{}
+	idx := &Index{}
 	_, v := cursor.Seek([]byte(strconv.Itoa(start)))
 	for {
 		if cnt == iterateSize || v == nil {
@@ -175,11 +175,11 @@ func iterate(cursor *bolt.Cursor, ch chan<- string, done chan<- bool, start int,
 		}
 		lib.FromBytes(idx, v)
 
-		for _, tx := range idx.txs {
+		for _, tx := range idx.Txs {
 			if from != "" && tx.From == from {
-				ch <- idx.hash
+				ch <- idx.Hash
 			} else if to != "" && tx.To == to {
-				ch <- idx.hash
+				ch <- idx.Hash
 			}
 		}
 

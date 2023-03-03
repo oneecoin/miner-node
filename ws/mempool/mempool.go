@@ -2,7 +2,6 @@ package mempool
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -29,7 +28,6 @@ func (tMempool) read() {
 	for {
 		m := &messages.Message{}
 		err := mempool.conn.ReadJSON(m)
-		log.Println("got message")
 		lib.HandleErr(err)
 		handleMessage(m)
 	}

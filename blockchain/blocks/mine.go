@@ -69,9 +69,9 @@ func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {
 		default:
 
 		}
-		hash := HashBlock(block)
+		block.Hash = HashBlock(block)
 
-		if strings.HasPrefix(hash, target) {
+		if strings.HasPrefix(block.Hash, target) {
 			block.Timestamp = int(time.Now().Local().Unix())
 			printBlockStatus(block.Nonce, block.Hash)
 			break

@@ -29,7 +29,7 @@ func printTable(txsCount int, prevHash string) {
 	data := []string{
 		fmt.Sprintf("%d", difficulty),
 		fmt.Sprintf("%d", txsCount),
-		fmt.Sprintf("%d", getCurrentHeight()),
+		fmt.Sprintf("%d", getCurrentHeight()+1),
 		prevHash,
 	}
 
