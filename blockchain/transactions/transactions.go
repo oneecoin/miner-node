@@ -10,6 +10,10 @@ import (
 
 func ValidateTx(tx *Tx) bool {
 
+	if tx.TxIns.From == "COINBASE" {
+		return true
+	}
+
 	x, y, err := lib.RestoreBigInts(tx.TxIns.From)
 	if err != nil {
 		return false
@@ -18,10 +22,6 @@ func ValidateTx(tx *Tx) bool {
 	hash, err := hex.DecodeString(tx.ID)
 	if err != nil {
 		return false
-	}
-
-	if tx.TxIns.From == "COINBASE" {
-		return true
 	}
 
 	for _, txIn := range tx.TxIns.V {
