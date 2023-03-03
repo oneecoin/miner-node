@@ -57,6 +57,7 @@ func ListenForMining() {
 		if txs == nil {
 			s.FinalMSG = properties.ErrorStr("Rejected due to lack of transactions")
 			s.Stop()
+			fmt.Println()
 			continue
 		}
 		s.Stop()

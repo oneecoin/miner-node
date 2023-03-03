@@ -59,7 +59,6 @@ func handleMessage(m *messages.Message) {
 
 		mempool.inbox <- lib.ToJSON(m)
 	case messages.MessageBalanceRequest:
-		log.Println("handling message9")
 		payload := &messages.PayloadHash{}
 		lib.FromJSON(m.Payload, payload)
 
