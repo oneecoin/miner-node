@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -81,13 +82,14 @@ func InitServer(port int) {
 		}
 	})
 
-	// url := "https://api64.ipify.org"
-	// resp, err := http.Get(url)
-	// lib.HandleErr(err)
-	// defer resp.Body.Close()
-	// ip, err := ioutil.ReadAll(resp.Body)
-	// lib.HandleErr(err)
+	url := "https://api64.ipify.org"
+	resp, err := http.Get(url)
+	lib.HandleErr(err)
+	defer resp.Body.Close()
+	ip, err := ioutil.ReadAll(resp.Body)
+	lib.HandleErr(err)
+	properties.PubliIP = string(ip)
 
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	lib.HandleErr(err)
 }

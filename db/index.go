@@ -87,7 +87,7 @@ func FindHashesFrom(publicKey string) []string {
 		done := make(chan bool)
 		cnt := 0
 
-		for start := 1; start >= amount; start += iterateSize {
+		for start := 1; start < amount; start += iterateSize {
 			cnt++
 			go iterate(b.Cursor(), ch, done, start, publicKey, "")
 		}
@@ -116,7 +116,7 @@ func FindHashesTo(publicKey string) []string {
 		done := make(chan bool)
 		cnt := 0
 
-		for start := 1; start >= amount; start += iterateSize {
+		for start := 1; start < amount; start += iterateSize {
 			cnt++
 			go iterate(b.Cursor(), ch, done, start, "", publicKey)
 		}
@@ -145,7 +145,7 @@ func FindHashesAll(publicKey string) []string {
 		done := make(chan bool)
 		cnt := 0
 
-		for start := 1; start >= amount; start += iterateSize {
+		for start := 1; start < amount; start += iterateSize {
 			cnt++
 			go iterate(b.Cursor(), ch, done, start, publicKey, publicKey)
 		}
@@ -169,7 +169,7 @@ func iterate(cursor *bolt.Cursor, ch chan<- string, done chan<- bool, start int,
 	idx := &Index{}
 	_, v := cursor.Seek([]byte(strconv.Itoa(start)))
 	for {
-		if cnt == iterateSize || v == nil {
+		if cnt == iterateSize || len(v) == 0 {
 			done <- true
 			return
 		}

@@ -75,6 +75,9 @@ func AddBlock(block *Block) {
 
 func FindBlocksWithPage(page int) []byte {
 	start := getCurrentHeight() - (properties.DefaultPageSize * (page - 1))
+	if start <= 0 {
+		return lib.ToJSON([]BlockSummary{})
+	}
 	hash := db.FindHashByHeight(start)
 	bytes := db.FindBlocksPageByHash(hash)
 
@@ -82,7 +85,7 @@ func FindBlocksWithPage(page int) []byte {
 
 	for _, blockBytes := range bytes {
 		var block Block
-		lib.FromBytes(block, blockBytes)
+		lib.FromBytes(&block, blockBytes)
 		blockSummary := BlockSummary{
 			Hash:              block.Hash,
 			Height:            block.Height,
@@ -103,14 +106,14 @@ func FindBlocksWithPage(page int) []byte {
 func FindBlock(hash string) []byte {
 	var block Block
 	bytes := db.FindBlockByHash(hash)
-	lib.FromBytes(block, bytes)
+	lib.FromBytes(&block, bytes)
 	return lib.ToJSON(block)
 }
 
 func FindLatestBlock() []byte {
 	var block Block
 	bytes := db.FindBlockByHash(lastHash)
-	lib.FromBytes(block, bytes)
+	lib.FromBytes(&block, bytes)
 	return lib.ToJSON(block)
 }
 
@@ -122,7 +125,7 @@ func FindTxsByPublicKey(publicKey string) transactions.TxS {
 
 	for _, blockBytes := range bytes {
 		var block Block
-		lib.FromBytes(block, blockBytes)
+		lib.FromBytes(&block, blockBytes)
 		for _, tx := range block.Transactions {
 			if tx.TxIns.From == publicKey || tx.TxOuts[0].PublicKey == publicKey {
 				txs = append(txs, tx)
@@ -148,7 +151,7 @@ func FindUTxOutsByPublicKey(publicKey string, amount int) (transactions.UTxOutS,
 	bytes := db.FindBlocksByHashes(spentAt)
 	for _, blockBytes := range bytes {
 		var block Block
-		lib.FromBytes(block, blockBytes)
+		lib.FromBytes(&block, blockBytes)
 		for _, tx := range block.Transactions {
 			if tx.TxIns.From == publicKey {
 				for _, txIn := range tx.TxIns.V {
@@ -161,7 +164,7 @@ func FindUTxOutsByPublicKey(publicKey string, amount int) (transactions.UTxOutS,
 	bytes = db.FindBlocksByHashes(earnedAt)
 	for _, blockBytes := range bytes {
 		var block Block
-		lib.FromBytes(block, blockBytes)
+		lib.FromBytes(&block, blockBytes)
 		for _, tx := range block.Transactions {
 			for index, txOut := range tx.TxOuts {
 				if txOut.PublicKey == publicKey {

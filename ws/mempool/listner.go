@@ -2,6 +2,7 @@ package mempool
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"atomicgo.dev/cursor"
@@ -11,7 +12,7 @@ import (
 )
 
 func ListenForMining() {
-	interval := time.Minute * time.Duration(properties.CheckInterval)
+	interval := time.Minute * time.Duration(properties.CheckInterval-4)
 	shouldWait := true
 	for {
 		var spent time.Duration = 0
@@ -72,6 +73,8 @@ func ListenForMining() {
 
 		blocks.AddBlock(block)
 		properties.BlockBroadcastInbox <- lib.ToBytes(block)
+		properties.NewBlockInbox <- properties.PubliIP + fmt.Sprintf(":%d", properties.Port)
+		log.Println("Block successfully added!")
 
 		shouldWait = true
 	}

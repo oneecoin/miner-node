@@ -5,3 +5,4 @@ var Port int
 var CheckInterval int
 var IsDownloading bool = false
 var MinTxs int
+var PubliIP string

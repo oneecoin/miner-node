@@ -20,8 +20,11 @@ func StartDownloadingBlockChain() {
 	peer := getRandomPeer()
 	if peer == nil {
 		fmt.Println(properties.WarningStr("Peer not found. Initializing DB"))
-		_, err := os.Create("blockchain.db")
-		lib.HandleErr(err)
+		if _, err := os.Stat("blockchain.db"); os.IsNotExist(err) {
+			// file does not exist, create it
+			_, err := os.Create("blockchain.db")
+			lib.HandleErr(err)
+		}
 		return
 	}
 

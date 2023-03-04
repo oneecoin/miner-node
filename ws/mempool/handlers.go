@@ -52,7 +52,6 @@ func handleMessage(m *messages.Message) {
 				Txs: txs,
 			}),
 		}
-
 		mempool.inbox <- lib.ToJSON(m)
 	case messages.MessageBalanceRequest:
 		payload := &messages.PayloadHash{}
@@ -74,7 +73,6 @@ func sendBlocks(page int) {
 		Kind:    messages.MessageBlocksResponse,
 		Payload: blocks.FindBlocksWithPage(page),
 	}
-
 	mempool.inbox <- lib.ToJSON(m)
 }
 
