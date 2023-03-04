@@ -1,7 +1,6 @@
 package http
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -23,7 +22,7 @@ var prs *peers.TPeers = peers.Peers
 func InitServer(port int) {
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		publicKey := r.URL.Query().Get("publicKey")
+		// publicKey := r.URL.Query().Get("publicKey")
 		port := r.URL.Query().Get("port")
 		host := r.Header.Get("X-Forwarded-For")
 		if host != "" {
@@ -32,27 +31,27 @@ func InitServer(port int) {
 			// If the X-Forwarded-For header is not available, get the IP address from the RemoteAddr field
 			host = strings.Split(r.RemoteAddr, ":")[0]
 		}
-		address := fmt.Sprintf("%s:%s", host, port)
+		// address := fmt.Sprintf("%s:%s", host, port)
 
 		wsUpgrader.CheckOrigin = func(r *http.Request) bool {
 			// send http request to the address
-			res, err := http.Get("http://" + address + "/check")
-			if err != nil {
-				return false
-			}
-			if res.StatusCode != http.StatusAccepted {
-				return false
-			}
+			// res, err := http.Get("http://" + address + "/check")
+			// if err != nil {
+			// 	return false
+			// }
+			// if res.StatusCode != http.StatusAccepted {
+			// 	return false
+			// }
 
-			defer res.Body.Close()
-			a := struct{ PublicKey string }{}
-			err = json.NewDecoder(res.Body).Decode(&a)
-			if err != nil {
-				return false
-			}
-			if a.PublicKey != publicKey {
-				return false
-			}
+			// defer res.Body.Close()
+			// a := struct{ PublicKey string }{}
+			// err = json.NewDecoder(res.Body).Decode(&a)
+			// if err != nil {
+			// 	return false
+			// }
+			// if a.PublicKey != publicKey {
+			// 	return false
+			// }
 			return true
 		}
 		conn, err := wsUpgrader.Upgrade(w, r, nil)

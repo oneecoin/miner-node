@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	difficulty = 4
+	difficulty = 5
 )
 
 func MineTxs(txs transactions.TxS) (*Block, transactions.TxS) {

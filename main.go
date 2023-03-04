@@ -32,7 +32,7 @@ func setup() {
 
 	// print large letter
 	ascii := figlet4go.NewAsciiRender()
-	renderStr, _ := ascii.Render("OneeCoin")
+	renderStr, _ := ascii.Render("Oneecoin")
 	fmt.Print(renderStr)
 
 	// interact

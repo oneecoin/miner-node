@@ -30,7 +30,7 @@ func Connect() {
 	)
 
 	var peerList []string
-	res, err := http.Get(fmt.Sprintf("http://%s/peers?port=%d&publicIP=%s", properties.MempoolAddress, properties.Port, properties.PubliIP))
+	res, err := http.Get(fmt.Sprintf("https://%s/peers?port=%d", properties.MempoolAddress, properties.Port))
 	lib.HandleErr(err)
 	err = json.NewDecoder(res.Body).Decode(&peerList)
 	if err != nil && err != io.EOF {

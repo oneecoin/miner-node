@@ -12,7 +12,7 @@ import (
 )
 
 func ListenForMining() {
-	interval := time.Minute * time.Duration(properties.CheckInterval-4)
+	interval := time.Minute * time.Duration(properties.CheckInterval)
 	shouldWait := true
 	for {
 		var spent time.Duration = 0

@@ -44,7 +44,6 @@ func handleMessage(m *messages.Message) {
 	case messages.MessageNodeTxsRequest:
 		payload := &messages.PayloadHash{}
 		lib.FromJSON(m.Payload, payload)
-
 		txs := blocks.FindTxsByPublicKey(payload.Hash)
 		m := messages.Message{
 			Kind: messages.MessageNodeTxsResponse,

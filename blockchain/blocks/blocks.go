@@ -106,13 +106,17 @@ func FindBlocksWithPage(page int) []byte {
 func FindBlock(hash string) []byte {
 	var block Block
 	bytes := db.FindBlockByHash(hash)
-	lib.FromBytes(&block, bytes)
-	return lib.ToJSON(block)
+	if len(bytes) != 0 {
+		lib.FromBytes(&block, bytes)
+		return lib.ToJSON(block)
+	} else {
+		return lib.ToJSON(nil)
+	}
 }
 
 func FindLatestBlock() []byte {
 	var block Block
-	bytes := db.FindBlockByHash(lastHash)
+	bytes := db.FindBlockByHash(getLastHash())
 	lib.FromBytes(&block, bytes)
 	return lib.ToJSON(block)
 }
@@ -132,7 +136,6 @@ func FindTxsByPublicKey(publicKey string) transactions.TxS {
 			}
 		}
 	}
-
 	sort.Slice(txs, func(i, j int) bool {
 		return txs[i].Timestamp > txs[j].Timestamp
 	})
