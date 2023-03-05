@@ -64,13 +64,19 @@ func AddBlock(block *Block) {
 	txs := []db.IndexTx{}
 
 	for _, tx := range block.Transactions {
+		to := []string{}
+		for _, txOut := range tx.TxOuts {
+			to = append(to, txOut.PublicKey)
+		}
 		txs = append(txs, db.IndexTx{
 			From: tx.TxIns.From,
-			To:   tx.TxOuts[0].PublicKey,
+			To:   to,
 		})
 	}
 
 	db.AddIndex(block.Height, block.Hash, txs)
+	updateCurrentHeight(block.Height)
+	updateLastHash(block.Hash)
 }
 
 func FindBlocksWithPage(page int) []byte {
@@ -117,8 +123,12 @@ func FindBlock(hash string) []byte {
 func FindLatestBlock() []byte {
 	var block Block
 	bytes := db.FindBlockByHash(getLastHash())
-	lib.FromBytes(&block, bytes)
-	return lib.ToJSON(block)
+	if len(bytes) != 0 {
+		lib.FromBytes(&block, bytes)
+		return lib.ToJSON(block)
+	} else {
+		return lib.ToJSON(nil)
+	}
 }
 
 func FindTxsByPublicKey(publicKey string) transactions.TxS {
