@@ -84,8 +84,7 @@ func FindBlocksWithPage(page int) []byte {
 	if start <= 0 {
 		return lib.ToJSON([]BlockSummary{})
 	}
-	hash := db.FindHashByHeight(start)
-	bytes := db.FindBlocksPageByHash(hash)
+	bytes := db.FindBlocksPageByHeight(start)
 
 	var blocks []BlockSummary
 

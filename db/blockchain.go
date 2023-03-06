@@ -1,6 +1,9 @@
 package db
 
 import (
+	"strconv"
+
+	"github.com/onee-only/miner-node/lib"
 	"github.com/onee-only/miner-node/properties"
 	bolt "go.etcd.io/bbolt"
 )
@@ -25,25 +28,26 @@ func FindBlockByHash(hash string) []byte {
 	return block
 }
 
-func FindBlocksPageByHash(hash string) [][]byte {
+func FindBlocksPageByHeight(cur int) [][]byte {
 	var blocks [][]byte
 	DB.View(func(tx *bolt.Tx) error {
-		c := tx.Bucket([]byte(properties.BucketBlockchain)).Cursor()
+		bc := tx.Bucket([]byte(properties.BucketBlockchain)).Cursor()
+		ic := tx.Bucket([]byte(properties.BucketIndex)).Cursor()
 
 		cnt := 0
-		if _, v := c.Seek([]byte(hash)); v != nil {
-			blocks = append(blocks, v)
-		}
+
 		for {
+			if _, idxBytes := ic.Seek([]byte(strconv.Itoa(cur))); idxBytes != nil {
+				var idx Index
+				lib.FromBytes(&idx, idxBytes)
+				_, blockBytes := bc.Seek([]byte(idx.Hash))
+				blocks = append(blocks, blockBytes)
+			}
+			cur--
 			cnt++
-			if cnt == properties.DefaultPageSize {
+			if cnt == properties.DefaultPageSize || cur == 0 {
 				break
 			}
-			_, v := c.Prev()
-			if v == nil {
-				break
-			}
-			blocks = append(blocks, v)
 		}
 		return nil
 	})
